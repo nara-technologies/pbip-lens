@@ -64,4 +64,4 @@ PBIP Lens no es un simple buscador de texto (`Ctrl+F`). Su motor de auditoría u
 * La detección de uso en visuales de terceros (Custom Visuals) con estructuras JSON no estándar puede requerir validación manual.
 
 ## 📝 Licencia
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](https://github.com/nara-technologies/pbip-lens) para más detalles.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.

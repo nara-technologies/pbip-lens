@@ -4,6 +4,10 @@
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.\"",
   "version": "0.1.0",
   "publisher": "Nara-Technologies",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nara-technologies/pbip-lens"
+  },
   "icon": "images/logo.png",
   "engines": {
     "vscode": "^1.110.0"
