@@ -5,6 +5,16 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-04-08
+
+### Added
+- **UI 2.0 (Welcome Views)**: Implementing big "Audit Project" buttons when no data is loaded, improving onboarding.
+- **Hierarchy Controls**: New "Expand All" and "Collapse All" actions in the view title and context menus.
+- **Refresh Icon**: Replaced standard play icon with a standard VS Code refresh icon for audit updates.
+
+### Fixed
+- **Welcome View Visibility**: Resolved issue where placeholder items were hiding the welcome buttons.
+
 ## [0.1.1] - 2026-04-08
 
 ### Added

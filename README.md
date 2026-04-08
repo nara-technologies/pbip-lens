@@ -6,7 +6,7 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)
-![Status: Production Ready](https://img.shields.io/badge/Status-v0.1.1--Stable-green.svg)
+![Status: Production Ready](https://img.shields.io/badge/Status-v0.1.2--Stable-green.svg)
 
 **PBIP Lens** es una herramienta de análisis de impacto y dependencias estáticas para archivos de proyectos de Power BI (`.pbip`, `.tmdl`, `.pbir`). 
 

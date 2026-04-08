@@ -159,11 +159,28 @@ export function activate(context: vscode.ExtensionContext) {
         await vscode.commands.executeCommand('markdown.showPreview', uri);
     });
 
+    const refreshAuditCommand = vscode.commands.registerCommand('pbip-lens.refreshAudit', () => {
+        vscode.commands.executeCommand('pbip-lens.runAudit');
+    });
+
+    const expandAllCommand = vscode.commands.registerCommand('pbip-lens.expandAll', () => {
+        measuresProvider.expandAll();
+        tablesProvider.expandAll();
+    });
+
     const toggleViewCommand = vscode.commands.registerCommand('pbip-lens.toggleViewMode', () => {
         measuresProvider.toggleViewMode();
     });
 
-    context.subscriptions.push(runAuditCommand, openFileCommand, showMeasureDaxCommand, showColumnDashboardCommand, toggleViewCommand);
+    context.subscriptions.push(
+        runAuditCommand, 
+        refreshAuditCommand, 
+        expandAllCommand, 
+        openFileCommand, 
+        showMeasureDaxCommand, 
+        showColumnDashboardCommand, 
+        toggleViewCommand
+    );
 }
 
 export function deactivate() {}

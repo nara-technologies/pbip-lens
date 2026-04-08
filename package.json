@@ -2,7 +2,7 @@
   "name": "pbip-lens",
   "displayName": "PBIP Lens",
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.\"",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "Nara-Technologies",
   "repository": {
     "type": "git",
@@ -53,20 +53,44 @@
         {
           "id": "pbipLensMeasuresView",
           "name": "Measures Explorer",
-          "icon": "images/logo.png"
+          "icon": "images/logo.png",
+          "visibility": "visible",
+          "showCollapseAll": true
         },
         {
           "id": "pbipLensTablesView",
           "name": "Tables Explorer",
-          "icon": "images/logo.png"
+          "icon": "images/logo.png",
+          "visibility": "visible",
+          "showCollapseAll": true
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "pbipLensMeasuresView",
+        "contents": "Escanea tu proyecto PBIP para identificar el uso de medidas DAX en visuales y detectar huérfanas.\n[Auditar Proyecto](command:pbip-lens.runAudit)\nPara más información, [lee la documentación](https://github.com/nara-technologies/pbip-lens)."
+      },
+      {
+        "view": "pbipLensTablesView",
+        "contents": "Analiza las tablas y columnas de tu modelo semántico para evaluar el impacto de cambios.\n[Auditar Proyecto](command:pbip-lens.runAudit)"
+      }
+    ],
     "commands": [
       {
         "command": "pbip-lens.runAudit",
         "title": "PBIP Lens: Auditar Proyecto",
         "icon": "$(play)"
+      },
+      {
+        "command": "pbip-lens.refreshAudit",
+        "title": "PBIP Lens: Refrescar Auditoría",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "pbip-lens.expandAll",
+        "title": "Expandir Todo",
+        "icon": "$(expand-all)"
       },
       {
         "command": "pbip-lens.toggleViewMode",
@@ -77,14 +101,26 @@
     "menus": {
       "view/title": [
         {
-          "command": "pbip-lens.runAudit",
+          "command": "pbip-lens.refreshAudit",
           "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
           "group": "navigation@1"
         },
         {
+          "command": "pbip-lens.expandAll",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "navigation@2"
+        },
+        {
           "command": "pbip-lens.toggleViewMode",
           "when": "view == pbipLensMeasuresView",
-          "group": "navigation@2"
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pbip-lens.expandAll",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "1_modification"
         }
       ]
     }
