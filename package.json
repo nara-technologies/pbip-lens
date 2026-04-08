@@ -1,0 +1,106 @@
+{
+  "name": "pbip-lens",
+  "displayName": "PBIP Lens",
+  "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.\"",
+  "version": "0.1.0",
+  "publisher": "Nara-Technologies",
+  "icon": "images/logo.png",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "dax",
+        "aliases": ["DAX", "dax"],
+        "extensions": [".dax", ".tmdl"]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dax",
+        "scopeName": "source.dax",
+        "path": "./syntaxes/dax.tmLanguage.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pbip-lens-container",
+          "title": "PBIP Lens",
+          "icon": "images/logo.png",
+          "type": "tree"
+        }
+      ]
+    },
+    "views": {
+      "pbip-lens-container": [
+        {
+          "id": "pbipLensMeasuresView",
+          "name": "Measures Explorer",
+          "icon": "images/logo.png"
+        },
+        {
+          "id": "pbipLensTablesView",
+          "name": "Tables Explorer",
+          "icon": "images/logo.png"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "pbip-lens.runAudit",
+        "title": "PBIP Lens: Auditar Proyecto",
+        "icon": "$(play)"
+      },
+      {
+        "command": "pbip-lens.toggleViewMode",
+        "title": "PBIP Lens: Toggle Group By Pages",
+        "icon": "$(list-flat)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "pbip-lens.runAudit",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "pbip-lens.toggleViewMode",
+          "when": "view == pbipLensMeasuresView",
+          "group": "navigation@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.110.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
