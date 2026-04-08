@@ -64,10 +64,18 @@ export function activate(context: vscode.ExtensionContext) {
     let lastResults: any = null;
 
     const measuresProvider = new MeasuresTreeProvider();
-    vscode.window.registerTreeDataProvider('pbipLensMeasuresView', measuresProvider);
-
     const tablesProvider = new TablesTreeProvider();
-    vscode.window.registerTreeDataProvider('pbipLensTablesView', tablesProvider);
+
+    // Create Tree Views to get API access (reveal, etc)
+    const measuresTreeView = vscode.window.createTreeView('pbipLensMeasuresView', {
+        treeDataProvider: measuresProvider,
+        showCollapseAll: true
+    });
+
+    const tablesTreeView = vscode.window.createTreeView('pbipLensTablesView', {
+        treeDataProvider: tablesProvider,
+        showCollapseAll: true
+    });
 
     const runAuditCommand = vscode.commands.registerCommand('pbip-lens.runAudit', async () => {
         await vscode.window.withProgress({
@@ -83,6 +91,10 @@ export function activate(context: vscode.ExtensionContext) {
             lastResults = results;
             measuresProvider.refresh(results);
             tablesProvider.refresh(results);
+            
+            // Activate the views
+            vscode.commands.executeCommand('setContext', 'pbip-lens.isAudited', true);
+            
             vscode.commands.executeCommand('pbipLensMeasuresView.focus');
         });
     });
@@ -168,14 +180,47 @@ export function activate(context: vscode.ExtensionContext) {
         tablesProvider.expandAll();
     });
 
+    const expandItemCommand = vscode.commands.registerCommand('pbip-lens.expandItem', (item: any) => {
+        if (!item) { return; }
+        const view = item.tableData ? tablesTreeView : measuresTreeView;
+        view.reveal(item, { expand: 1, select: false, focus: true });
+    });
+
+    const expandHierarchyCommand = vscode.commands.registerCommand('pbip-lens.expandHierarchy', async (item: any) => {
+        if (!item) { return; }
+        const view = item.tableData ? tablesTreeView : measuresTreeView;
+        // Expand deeper levels (up to 3 levels usually covers everything relevant)
+        await view.reveal(item, { expand: 3, select: false, focus: true });
+    });
+
+    const collapseItemCommand = vscode.commands.registerCommand('pbip-lens.collapseItem', (item: any) => {
+        if (!item) { return; }
+        // VS Code doesn't have a direct "collapse" API for a single item.
+        // We trigger a global refresh which resets nodes to their default state (Collapsed)
+        measuresProvider.refresh();
+        tablesProvider.refresh();
+    });
+
+    const collapseHierarchyCommand = vscode.commands.registerCommand('pbip-lens.collapseHierarchy', (item: any) => {
+        if (!item) { return; }
+        measuresProvider.refresh();
+        tablesProvider.refresh();
+    });
+
     const toggleViewCommand = vscode.commands.registerCommand('pbip-lens.toggleViewMode', () => {
         measuresProvider.toggleViewMode();
     });
 
     context.subscriptions.push(
+        measuresTreeView,
+        tablesTreeView,
         runAuditCommand, 
         refreshAuditCommand, 
         expandAllCommand, 
+        expandItemCommand,
+        expandHierarchyCommand,
+        collapseItemCommand,
+        collapseHierarchyCommand,
         openFileCommand, 
         showMeasureDaxCommand, 
         showColumnDashboardCommand, 

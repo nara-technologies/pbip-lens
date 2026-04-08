@@ -52,28 +52,26 @@
       "pbip-lens-container": [
         {
           "id": "pbipLensMeasuresView",
-          "name": "Measures Explorer",
+          "name": "Medidas y Dependencias",
           "icon": "images/logo.png",
           "visibility": "visible",
           "showCollapseAll": true
         },
         {
           "id": "pbipLensTablesView",
-          "name": "Tables Explorer",
+          "name": "Tablas y Columnas",
           "icon": "images/logo.png",
           "visibility": "visible",
-          "showCollapseAll": true
+          "showCollapseAll": true,
+          "when": "pbip-lens.isAudited"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "pbipLensMeasuresView",
-        "contents": "Escanea tu proyecto PBIP para identificar el uso de medidas DAX en visuales y detectar huérfanas.\n[Auditar Proyecto](command:pbip-lens.runAudit)\nPara más información, [lee la documentación](https://github.com/nara-technologies/pbip-lens)."
-      },
-      {
-        "view": "pbipLensTablesView",
-        "contents": "Analiza las tablas y columnas de tu modelo semántico para evaluar el impacto de cambios.\n[Auditar Proyecto](command:pbip-lens.runAudit)"
+        "contents": "Bienvenido a PBIP Lens. Analiza la estructura y dependencias de tu proyecto Power BI.\n[Auditar Proyecto](command:pbip-lens.runAudit)",
+        "when": "!pbip-lens.isAudited"
       }
     ],
     "commands": [
@@ -91,6 +89,22 @@
         "command": "pbip-lens.expandAll",
         "title": "Expandir Todo",
         "icon": "$(expand-all)"
+      },
+      {
+        "command": "pbip-lens.expandItem",
+        "title": "Expandir"
+      },
+      {
+        "command": "pbip-lens.collapseItem",
+        "title": "Contraer"
+      },
+      {
+        "command": "pbip-lens.expandHierarchy",
+        "title": "Expandir Jerarquía"
+      },
+      {
+        "command": "pbip-lens.collapseHierarchy",
+        "title": "Contraer Jerarquía"
       },
       {
         "command": "pbip-lens.toggleViewMode",
@@ -118,9 +132,24 @@
       ],
       "view/item/context": [
         {
-          "command": "pbip-lens.expandAll",
+          "command": "pbip-lens.expandItem",
           "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
-          "group": "1_modification"
+          "group": "1_modification@1"
+        },
+        {
+          "command": "pbip-lens.collapseItem",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "1_modification@2"
+        },
+        {
+          "command": "pbip-lens.expandHierarchy",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "1_modification@3"
+        },
+        {
+          "command": "pbip-lens.collapseHierarchy",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "group": "1_modification@4"
         }
       ]
     }

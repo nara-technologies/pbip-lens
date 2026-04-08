@@ -19,7 +19,6 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
     expandAll(): void {
         this.forceExpanded = true;
         this.refresh();
-        // Reset after letting the UI catch the expansion state
         setTimeout(() => {
             this.forceExpanded = false;
         }, 1000);
@@ -48,10 +47,10 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
             const items: MeasureItem[] = [];
             
             if (deps && deps.length > 0) {
-                items.push(new MeasureItem(`📉 Usa a (${deps.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'deps_folder', undefined, undefined, element.measureData, element.columnData));
+                items.push(new MeasureItem(`📉 Usa a (${deps.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'deps_folder', undefined, undefined, element.measureData, element.columnData, undefined, `${element.id}/deps`));
             }
             if (used && used.length > 0) {
-                items.push(new MeasureItem(`📈 Usada por (${used.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'usedby_folder', undefined, undefined, element.measureData, element.columnData));
+                items.push(new MeasureItem(`📈 Usada por (${used.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'usedby_folder', undefined, undefined, element.measureData, element.columnData, undefined, `${element.id}/usedby`));
             }
             return Promise.resolve(items);
         }
@@ -61,13 +60,13 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
             return Promise.resolve(deps.map(depName => {
                 const depMeasure = this.getMeasureDefinition(depName);
                 if (depMeasure) {
-                    return new MeasureItem(depName, vscode.TreeItemCollapsibleState.None, 'child_item', depMeasure.filePath, undefined, depMeasure);
+                    return new MeasureItem(depName, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'measure_item', depMeasure.filePath, undefined, depMeasure, undefined, undefined, `${element.id}/${depName}`);
                 }
                 const depColumn = this.getColumnDefinition(depName);
                 if (depColumn) {
-                    return new MeasureItem(depName, vscode.TreeItemCollapsibleState.None, 'child_item', undefined, undefined, undefined, depColumn);
+                    return new MeasureItem(depName, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'column_item', undefined, undefined, undefined, depColumn, undefined, `${element.id}/${depName}`);
                 }
-                return new MeasureItem(depName, vscode.TreeItemCollapsibleState.None, 'child_item');
+                return new MeasureItem(depName, vscode.TreeItemCollapsibleState.None, 'child_item', undefined, undefined, undefined, undefined, undefined, `${element.id}/${depName}`);
             }));
         }
 
@@ -76,13 +75,13 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
             return Promise.resolve(used.map(parentName => {
                  const parentMeasure = this.getMeasureDefinition(parentName);
                  if (parentMeasure) {
-                     return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item', parentMeasure.filePath, undefined, parentMeasure);
+                     return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item', parentMeasure.filePath, undefined, parentMeasure, undefined, undefined, `${element.id}/${parentName}`);
                  }
                  const parentColumn = this.getColumnDefinition(parentName);
                  if (parentColumn) {
-                     return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item', undefined, undefined, undefined, parentColumn);
+                     return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item', undefined, undefined, undefined, parentColumn, undefined, `${element.id}/${parentName}`);
                  }
-                 return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item');
+                 return new MeasureItem(parentName, vscode.TreeItemCollapsibleState.None, 'parent_item', undefined, undefined, undefined, undefined, undefined, `${element.id}/${parentName}`);
             }));
         }
         return Promise.resolve([]);
@@ -109,17 +108,17 @@ export class MeasuresTreeProvider extends BaseTreeProvider {
             if (this.groupByPage) {
                 const items: MeasureItem[] = [];
                 for (const page of this.auditResult.pages) {
-                    items.push(new MeasureItem(`📄 ${page.displayName}`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page', undefined, page));
+                    items.push(new MeasureItem(`📄 ${page.displayName}`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page', undefined, page, undefined, undefined, undefined, `page_${page.displayName}`));
                 }
                 const orphanCount = this.auditResult.globalOrphanedMeasures.length;
-                items.push(new MeasureItem(`⚠️ Huérfanas (${orphanCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_orphaned'));
+                items.push(new MeasureItem(`⚠️ Huérfanas (${orphanCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_orphaned', undefined, undefined, undefined, undefined, undefined, 'global_orphaned'));
                 return Promise.resolve(items);
             } else {
                 const usedCount = this.auditResult.globalUsedMeasures.length;
                 const orphanCount = this.auditResult.globalOrphanedMeasures.length;
                 return Promise.resolve([
-                    new MeasureItem(`✅ En Uso (${usedCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_used'),
-                    new MeasureItem(`⚠️ Huérfanas (${orphanCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_orphaned')
+                    new MeasureItem(`✅ En Uso (${usedCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_used', undefined, undefined, undefined, undefined, undefined, 'global_used'),
+                    new MeasureItem(`⚠️ Huérfanas (${orphanCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'global_orphaned', undefined, undefined, undefined, undefined, undefined, 'global_orphaned')
                 ]);
             }
         }
@@ -128,32 +127,32 @@ export class MeasuresTreeProvider extends BaseTreeProvider {
             const usedCount = element.pageData.usedMeasures.length;
             const colsCount = element.pageData.usedColumns.length;
             return Promise.resolve([
-                new MeasureItem(`✅ Medidas en Uso (${usedCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page_used_measures', undefined, element.pageData),
-                new MeasureItem(`✅ Columnas en Uso (${colsCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page_used_columns', undefined, element.pageData)
+                new MeasureItem(`✅ Medidas en Uso (${usedCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page_used_measures', undefined, element.pageData, undefined, undefined, undefined, `${element.id}/measures`),
+                new MeasureItem(`✅ Columnas en Uso (${colsCount})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'page_used_columns', undefined, element.pageData, undefined, undefined, undefined, `${element.id}/columns`)
             ]);
         }
         
         if (element.contextValue === 'page_used_measures' && element.pageData) {
             return Promise.resolve(element.pageData.usedMeasures.map(m =>
-                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m)
+                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${m.name}`)
             ));
         }
 
         if (element.contextValue === 'page_used_columns' && element.pageData) {
             return Promise.resolve(element.pageData.usedColumns.map(c =>
-                new MeasureItem(c.name, (c.dependencies.length > 0 || c.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'column_item', undefined, undefined, undefined, c)
+                new MeasureItem(c.name, (c.dependencies.length > 0 || c.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'column_item', undefined, undefined, undefined, c, undefined, `${element.id}/${c.name}`)
             ));
         }
 
         if (element.contextValue === 'global_used') {
             return Promise.resolve(this.auditResult.globalUsedMeasures.map(m =>
-                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m)
+                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${m.name}`)
             ));
         }
 
         if (element.contextValue === 'global_orphaned') {
             return Promise.resolve(this.auditResult.globalOrphanedMeasures.map(m =>
-                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m)
+                new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${m.name}`)
             ));
         }
 
@@ -169,28 +168,28 @@ export class TablesTreeProvider extends BaseTreeProvider {
 
         if (!element) {
              const tables = Object.values(this.auditResult.semanticModel.tables).sort((a,b)=>a.name.localeCompare(b.name));
-             return Promise.resolve(tables.map(t => new MeasureItem(t.name, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_item', undefined, undefined, undefined, undefined, t)));
+             return Promise.resolve(tables.map(t => new MeasureItem(t.name, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_item', undefined, undefined, undefined, undefined, t, `table_${t.name}`)));
         }
 
         if (element.contextValue === 'table_item' && element.tableData) {
             const t = element.tableData;
             return Promise.resolve([
-                new MeasureItem(`Columnas (${t.columns.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_columns', undefined, undefined, undefined, undefined, t),
-                new MeasureItem(`Medidas (${t.measures.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_measures', undefined, undefined, undefined, undefined, t)
+                new MeasureItem(`Columnas (${t.columns.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_columns', undefined, undefined, undefined, undefined, t, `${element.id}/columns`),
+                new MeasureItem(`Medidas (${t.measures.length})`, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'table_measures', undefined, undefined, undefined, undefined, t, `${element.id}/measures`)
             ]);
         }
 
         if (element.contextValue === 'table_columns' && element.tableData) {
             return Promise.resolve(element.tableData.columns.map(cName => {
                 const c = this.auditResult!.semanticModel.columns[cName.toLowerCase()];
-                return new MeasureItem(c.name, (c.dependencies.length > 0 || c.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'column_item', undefined, undefined, undefined, c);
+                return new MeasureItem(c.name, (c.dependencies.length > 0 || c.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'column_item', undefined, undefined, undefined, c, undefined, `${element.id}/${cName}`);
             }));
         }
 
         if (element.contextValue === 'table_measures' && element.tableData) {
             return Promise.resolve(element.tableData.measures.map(mName => {
                 const m = this.auditResult!.semanticModel.measures[mName.toLowerCase()];
-                return new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m);
+                return new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${mName}`);
             }));
         }
 
@@ -207,9 +206,11 @@ export class MeasureItem extends vscode.TreeItem {
         public readonly pageData?: PageAudit,
         public readonly measureData?: MeasureDefinition,
         public readonly columnData?: ColumnDefinition,
-        public readonly tableData?: TableDefinition
+        public readonly tableData?: TableDefinition,
+        public override readonly id?: string
     ) {
         super(label, collapsibleState);
+        this.id = id;
         
         if (contextValue === 'measure_item' || contextValue === 'column_item' || contextValue === 'child_item' || contextValue === 'parent_item') {
             
