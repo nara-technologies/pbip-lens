@@ -5,6 +5,18 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-04-08
+
+### Added
+- **Calculated Column Dependencies (6th Pillar)**: Tracking between calculated columns and their dependencies.
+- **Visual Item Indicators**: Type icons (Medida/Columna) in dependency lists within the dashboard.
+
+### Fixed
+- **Universal Case-Insensitivity**: Fixed lookups for measures and columns in DAX expressions (ignoring casing).
+- **Enhanced Relationship Detection**: Support for dot notation (`Table.Column`) in relationship definitions.
+- **Dashboard Stability**: Fixed "0 counts" and "No content found" errors in Column Dashboards.
+- **UI Tree Stability**: Resolved crashes (`undefined`) when expanding measures or columns in the sidebar.
+
 ## [0.1.0] - 2026-04-08
 
 ### Added
