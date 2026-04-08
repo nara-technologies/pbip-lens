@@ -61,6 +61,7 @@ function formatDaxToVirtualDocument(measureName: string, rawContent: string): st
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('PBIP Lens is now active.');
+    let lastResults: any = null;
 
     const measuresProvider = new MeasuresTreeProvider();
     vscode.window.registerTreeDataProvider('pbipLensMeasuresView', measuresProvider);
@@ -79,6 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage('No se encontró un proyecto PBIP válido.');
                 return;
             }
+            lastResults = results;
             measuresProvider.refresh(results);
             tablesProvider.refresh(results);
             vscode.commands.executeCommand('pbipLensMeasuresView.focus');
@@ -107,7 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('pbip-lens-column', colProvider));
 
     const showColumnDashboardCommand = vscode.commands.registerCommand('pbip-lens.showColumnDashboard', async (columnDef: ColumnDefinition) => {
-        const uri = vscode.Uri.parse(`pbip-lens-column:${encodeURIComponent(columnDef.name)}.md`);
+        const uri = vscode.Uri.parse(`pbip-lens-column:${encodeURIComponent(columnDef.name.toLowerCase())}.md`);
         let md = `# 📊 Análisis de Columna: **${columnDef.name}**\n\n`;
         md += `| Propiedad | Valor |\n`;
         md += `| --- | --- |\n`;
@@ -121,17 +123,18 @@ export function activate(context: vscode.ExtensionContext) {
         md += `| Frente de Auditoría | Estado |\n`;
         md += `| :--- | :--- |\n`;
         md += `| **En Visuales PBIX** | ${columnDef.usedInVisuals ? 'Sí ✅' : 'No ❌'} |\n`;
-        md += `| **En Medidas DAX** | ${columnDef.isUsedInMeasures ? `Sí ✅ (Usada por ${columnDef.usedBy.filter(u => !u.includes('.')).length} medidas)` : 'No ❌'} |\n`;
+        md += `| **En Medidas DAX** | ${columnDef.isUsedInMeasures ? `Sí ✅ (Usada por ${columnDef.usedBy.filter(u => lastResults?.semanticModel?.measures?.[u.toLowerCase()]).length} medidas)` : 'No ❌'} |\n`;
+        md += `| **En Columnas Calc.** | ${columnDef.isUsedInCalculatedColumns ? `Sí ✅ (Usada por ${columnDef.usedBy.filter(u => lastResults?.semanticModel?.columns?.[u.toLowerCase()]).length} columnas)` : 'No ❌'} |\n`;
         md += `| **Es Llave de Relación** | ${columnDef.isRelationshipKey ? 'Sí 🗝️' : 'No ❌'} |\n`;
         md += `| **Es Sort-By Target** | ${columnDef.isSortByTarget ? 'Sí ⚠️' : 'No ❌'} |\n`;
         md += `| **Usada en Roles (RLS)** | ${columnDef.isUsedInRLS ? 'Sí 🔒' : 'No ❌'} |\n\n`;
 
-        const isInnocuous = !columnDef.usedInVisuals && !columnDef.isUsedInMeasures && !columnDef.isRelationshipKey && !columnDef.isSortByTarget && !columnDef.isUsedInRLS;
+        const isInnocuous = !columnDef.usedInVisuals && !columnDef.isUsedInMeasures && !columnDef.isUsedInCalculatedColumns && !columnDef.isRelationshipKey && !columnDef.isSortByTarget && !columnDef.isUsedInRLS;
         
         if (isInnocuous) {
-            md += `> [!TIP]\n> **Factor de Inocuidad:** Esta columna está completamente huérfana en las 5 capas del modelo. Retirarla ahorrará RAM y acelerará el modelo sin romper reportes ni lógicas.\n\n`;
+            md += `> [!TIP]\n> **Factor de Inocuidad:** Esta columna está completamente huérfana en las 6 capas del modelo. Retirarla ahorrará RAM y acelerará el modelo sin romper reportes ni lógicas.\n\n`;
         } else if (!columnDef.usedInVisuals) {
-            md += `> [!CAUTION]\n> **Factor de Inocuidad:** Esta columna NO está en visuales, pero es **estructural** para el modelo. ¡No la elimines!\n\n`;
+            md += `> [!CAUTION]\n> **Factor de Inocuidad:** Esta columna NO está en visuales, pero es **estructural** (usada en DAX, relaciones o RLS). ¡No la elimines!\n\n`;
         }
 
         if (columnDef.isCalculated && columnDef.content) {
@@ -144,7 +147,11 @@ export function activate(context: vscode.ExtensionContext) {
         if (columnDef.usedBy && columnDef.usedBy.length > 0) {
             md += `## 📈 Utilizada por (${columnDef.usedBy.length})\n`;
             columnDef.usedBy.forEach(u => {
-                md += `- \`${u}\`\n`;
+                const uKey = u.toLowerCase();
+                const isMeasure = lastResults?.semanticModel?.measures?.[uKey];
+                const isColumn = lastResults?.semanticModel?.columns?.[uKey];
+                const typeLabel = isMeasure ? '*(Medida)*' : (isColumn ? '*(Columna)*' : '');
+                md += `- \`${u}\` ${typeLabel}\n`;
             });
         }
 

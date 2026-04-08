@@ -17,12 +17,12 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
 
     protected getMeasureDefinition(name: string): MeasureDefinition | undefined {
         if (!this.auditResult) { return undefined; }
-        return this.auditResult.semanticModel.measures[name];
+        return this.auditResult.semanticModel.measures[name.toLowerCase()];
     }
     
     protected getColumnDefinition(name: string): ColumnDefinition | undefined {
         if (!this.auditResult) { return undefined; }
-        return this.auditResult.semanticModel.columns[name];
+        return this.auditResult.semanticModel.columns[name.toLowerCase()];
     }
 
     getTreeItem(element: MeasureItem): vscode.TreeItem {
@@ -172,14 +172,14 @@ export class TablesTreeProvider extends BaseTreeProvider {
 
         if (element.contextValue === 'table_columns' && element.tableData) {
             return Promise.resolve(element.tableData.columns.map(cName => {
-                const c = this.auditResult!.semanticModel.columns[cName];
+                const c = this.auditResult!.semanticModel.columns[cName.toLowerCase()];
                 return new MeasureItem(c.name, (c.dependencies.length > 0 || c.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'column_item', undefined, undefined, undefined, c);
             }));
         }
 
         if (element.contextValue === 'table_measures' && element.tableData) {
             return Promise.resolve(element.tableData.measures.map(mName => {
-                const m = this.auditResult!.semanticModel.measures[mName];
+                const m = this.auditResult!.semanticModel.measures[mName.toLowerCase()];
                 return new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m);
             }));
         }

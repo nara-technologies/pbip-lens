@@ -2,7 +2,7 @@
   "name": "pbip-lens",
   "displayName": "PBIP Lens",
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.\"",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "Nara-Technologies",
   "repository": {
     "type": "git",
@@ -21,8 +21,14 @@
     "languages": [
       {
         "id": "dax",
-        "aliases": ["DAX", "dax"],
-        "extensions": [".dax", ".tmdl"]
+        "aliases": [
+          "DAX",
+          "dax"
+        ],
+        "extensions": [
+          ".dax",
+          ".tmdl"
+        ]
       }
     ],
     "grammars": [

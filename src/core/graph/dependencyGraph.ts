@@ -16,12 +16,13 @@ export class DependencyGraph {
                 const current = queueMeasures.shift()!;
                 if (!usedMeasures.has(current)) {
                     usedMeasures.add(current);
-                    const def = semanticModel.measures[current];
+                    const def = semanticModel.measures[current.toLowerCase()];
                     if (def && def.dependencies) {
                         for (const dep of def.dependencies) {
-                            if (semanticModel.measures[dep] && !usedMeasures.has(dep)) {
+                            const depKey = dep.toLowerCase();
+                            if (semanticModel.measures[depKey] && !usedMeasures.has(dep)) {
                                 queueMeasures.push(dep);
-                            } else if (semanticModel.columns[dep] && !usedColumns.has(dep)) {
+                            } else if (semanticModel.columns[depKey] && !usedColumns.has(dep)) {
                                 queueColumns.push(dep);
                             }
                         }
@@ -32,12 +33,13 @@ export class DependencyGraph {
                 const current = queueColumns.shift()!;
                 if (!usedColumns.has(current)) {
                     usedColumns.add(current);
-                    const def = semanticModel.columns[current];
+                    const def = semanticModel.columns[current.toLowerCase()];
                     if (def && def.dependencies) {
                         for (const dep of def.dependencies) {
-                            if (semanticModel.measures[dep] && !usedMeasures.has(dep)) {
+                            const depKey = dep.toLowerCase();
+                            if (semanticModel.measures[depKey] && !usedMeasures.has(dep)) {
                                 queueMeasures.push(dep);
-                            } else if (semanticModel.columns[dep] && !usedColumns.has(dep)) {
+                            } else if (semanticModel.columns[depKey] && !usedColumns.has(dep)) {
                                 queueColumns.push(dep);
                             }
                         }
@@ -67,7 +69,8 @@ export class DependencyGraph {
             if (measure.content) {
                 const deps = extractDependencies(measure.content, measure.name);
                 for (const dep of deps) {
-                    if (semanticModel.measures[dep] || semanticModel.columns[dep]) {
+                    const depKey = dep.toLowerCase();
+                    if (semanticModel.measures[depKey] || semanticModel.columns[depKey]) {
                         measure.dependencies.push(dep);
                     }
                 }
@@ -78,7 +81,8 @@ export class DependencyGraph {
             if (column.content && column.isCalculated) {
                 const deps = extractDependencies(column.content, column.name);
                 for (const dep of deps) {
-                    if (semanticModel.measures[dep] || semanticModel.columns[dep]) {
+                    const depKey = dep.toLowerCase();
+                    if (semanticModel.measures[depKey] || semanticModel.columns[depKey]) {
                         column.dependencies.push(dep);
                     }
                 }
@@ -87,13 +91,14 @@ export class DependencyGraph {
 
         for (const measure of Object.values(semanticModel.measures)) {
             for (const dep of measure.dependencies) {
-                if (semanticModel.measures[dep]) {
-                    if (!semanticModel.measures[dep].usedBy.includes(measure.name)) {
-                       semanticModel.measures[dep].usedBy.push(measure.name);
+                const depKey = dep.toLowerCase();
+                if (semanticModel.measures[depKey]) {
+                    if (!semanticModel.measures[depKey].usedBy.includes(measure.name)) {
+                       semanticModel.measures[depKey].usedBy.push(measure.name);
                     }
-                } else if (semanticModel.columns[dep]) {
-                    if (!semanticModel.columns[dep].usedBy.includes(measure.name)) {
-                       semanticModel.columns[dep].usedBy.push(measure.name);
+                } else if (semanticModel.columns[depKey]) {
+                    if (!semanticModel.columns[depKey].usedBy.includes(measure.name)) {
+                       semanticModel.columns[depKey].usedBy.push(measure.name);
                     }
                 }
             }
@@ -101,13 +106,14 @@ export class DependencyGraph {
         
         for (const column of Object.values(semanticModel.columns)) {
             for (const dep of column.dependencies) {
-                if (semanticModel.measures[dep]) {
-                    if (!semanticModel.measures[dep].usedBy.includes(column.name)) {
-                       semanticModel.measures[dep].usedBy.push(column.name);
+                const depKey = dep.toLowerCase();
+                if (semanticModel.measures[depKey]) {
+                    if (!semanticModel.measures[depKey].usedBy.includes(column.name)) {
+                       semanticModel.measures[depKey].usedBy.push(column.name);
                     }
-                } else if (semanticModel.columns[dep]) {
-                    if (!semanticModel.columns[dep].usedBy.includes(column.name)) {
-                       semanticModel.columns[dep].usedBy.push(column.name);
+                } else if (semanticModel.columns[depKey]) {
+                    if (!semanticModel.columns[depKey].usedBy.includes(column.name)) {
+                       semanticModel.columns[depKey].usedBy.push(column.name);
                     }
                 }
             }
@@ -116,12 +122,16 @@ export class DependencyGraph {
         for (const column of Object.values(semanticModel.columns)) {
             if (column.usedBy.length > 0) {
                 let usedByMeas = false;
+                let usedByCalcCol = false;
                 for (const parent of column.usedBy) {
-                    if (semanticModel.measures[parent]) {
-                        usedByMeas = true; break;
+                    if (semanticModel.measures[parent.toLowerCase()]) {
+                        usedByMeas = true; 
+                    } else if (semanticModel.columns[parent.toLowerCase()]) {
+                        usedByCalcCol = true;
                     }
                 }
                 column.isUsedInMeasures = usedByMeas;
+                column.isUsedInCalculatedColumns = usedByCalcCol;
             }
         }
     }

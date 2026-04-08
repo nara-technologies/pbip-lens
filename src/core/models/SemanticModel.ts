@@ -23,6 +23,7 @@ export interface ColumnDefinition {
     isSortByTarget: boolean;
     isRelationshipKey: boolean;
     isUsedInRLS: boolean;
+    isUsedInCalculatedColumns: boolean;
 }
 
 export interface TableDefinition {

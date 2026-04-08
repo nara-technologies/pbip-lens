@@ -11,7 +11,7 @@ export class TMDLParser {
 
         const objectRegex = /^\s*(measure|column|partition|hierarchy|table|relationship|role)\s+(?:'([^']+)'|"([^"]+)"|([^=\s]+))/i;
         const sortByRegex = /^\s*sortByColumn\s*:\s*(?:'([^']+)'|"([^"]+)"|([^\s\n]+))/i;
-        const relColumnRegex = /^\s*(fromColumn|toColumn)\s*:\s*(?:'([^']+)'|"([^"]+)"|([^=\s]+))?\[(.*?)\]/i;
+        const relColumnRegex = /^\s*(fromColumn|toColumn)\s*:\s*(.*)$/i;
         // El RLS puede tener filtros explícitos sobre columnas: filterExpression: 'Table'[Col] = ... 
         // Aunque una evaluación precisa del DAX RLS usaría el AST, algo simple para detectar columnas en el DAX del RLS es buscar: 'Tabla'[Columna] o [Columna]
         // Para más robustez, si el role tiene permisos, lo extraemos.
@@ -32,16 +32,17 @@ export class TMDLParser {
             const body = currentObjectLines.join('\n');
             
             if (currentObjectType === 'measure' && currentTable) {
-                semanticModel.measures[currentObjectName] = {
+                const measureKey = currentObjectName.toLowerCase();
+                semanticModel.measures[measureKey] = {
                     name: currentObjectName,
                     tableName: currentTable,
-                    filePath: '', // Se lo asignaremos si queremos
+                    filePath: '', 
                     dependencies: [],
                     usedBy: [],
                     content: body
                 };
-                if (semanticModel.tables[currentTable]) {
-                    semanticModel.tables[currentTable].measures.push(currentObjectName);
+                if (semanticModel.tables[currentTable.toLowerCase()]) {
+                    semanticModel.tables[currentTable.toLowerCase()].measures.push(currentObjectName);
                 }
             } else if (currentObjectType === 'column' && currentTable) {
                 let isCalc = false;
@@ -66,7 +67,8 @@ export class TMDLParser {
                     dtype = dataTypeMatch.split(':')[1].trim();
                 }
 
-                semanticModel.columns[currentObjectName] = {
+                const columnKey = currentObjectName.toLowerCase();
+                semanticModel.columns[columnKey] = {
                     name: currentObjectName,
                     tableName: currentTable,
                     dataType: dtype,
@@ -79,10 +81,11 @@ export class TMDLParser {
                     isUsedInMeasures: false,
                     isSortByTarget: false,
                     isRelationshipKey: false,
-                    isUsedInRLS: false
+                    isUsedInRLS: false,
+                    isUsedInCalculatedColumns: false
                 };
-                if (semanticModel.tables[currentTable]) {
-                    semanticModel.tables[currentTable].columns.push(currentObjectName);
+                if (semanticModel.tables[currentTable.toLowerCase()]) {
+                    semanticModel.tables[currentTable.toLowerCase()].columns.push(currentObjectName);
                 }
 
                 // Detect SortBy
@@ -97,10 +100,22 @@ export class TMDLParser {
             } else if (currentObjectType === 'relationship') {
                 for (const line of currentObjectLines) {
                     const relMatch = relColumnRegex.exec(line);
-                    if (relMatch) {
-                        // relMatch[5] will be the column inside the brackets [Col]
-                        const colKey = relMatch[5].trim();
-                        relationshipKeys.push(colKey);
+                    if (relMatch && relMatch[2]) {
+                        const rightSide = relMatch[2].trim();
+                        // Support Table[Column], [Column] or Table.Column
+                        let colName = rightSide;
+                        
+                        // Try to find content in brackets first
+                        const bracketMatch = /\[(.*?)\]/.exec(rightSide);
+                        if (bracketMatch) {
+                            colName = bracketMatch[1];
+                        } else if (rightSide.includes('.')) {
+                            // Fallback to dot notation (User reported case)
+                            const parts = rightSide.split('.');
+                            colName = parts[parts.length - 1];
+                        }
+                        
+                        relationshipKeys.push(colName.trim());
                     }
                 }
             } else if (currentObjectType === 'role') {
@@ -132,8 +147,8 @@ export class TMDLParser {
                     if (objType === 'table') {
                         flushObject(); // Flush child of previous table if any, but a new table resets currentTable
                         currentTable = objName;
-                        if (!semanticModel.tables[currentTable]) {
-                            semanticModel.tables[currentTable] = {
+                        if (!semanticModel.tables[currentTable.toLowerCase()]) {
+                            semanticModel.tables[currentTable.toLowerCase()] = {
                                 name: currentTable,
                                 measures: [],
                                 columns: []
@@ -164,8 +179,8 @@ export class TMDLParser {
         
         // 1. SortBy Column Targets
         for (const { targetCol } of pendingSortByTargets) {
-            if (semanticModel.columns[targetCol]) {
-                semanticModel.columns[targetCol].isSortByTarget = true;
+            if (semanticModel.columns[targetCol.toLowerCase()]) {
+                semanticModel.columns[targetCol.toLowerCase()].isSortByTarget = true;
             }
         }
 

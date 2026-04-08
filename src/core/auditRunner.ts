@@ -54,8 +54,9 @@ export class PBIPAuditRunner {
                 struct.measures.forEach(m => pageRequiredMeasures.add(m));
                 struct.columns.forEach(c => {
                     pageRequiredColumns.add(c);
-                    if (semanticModel.columns[c]) {
-                        semanticModel.columns[c].usedInVisuals = true;
+                    const cKey = c.toLowerCase();
+                    if (semanticModel.columns[cKey]) {
+                        semanticModel.columns[cKey].usedInVisuals = true;
                     }
                 });
             }
@@ -70,18 +71,18 @@ export class PBIPAuditRunner {
             const pageUsedColumns: ColumnDefinition[] = [];
 
             for (const m of deps.measures) {
-                const dev = semanticModel.measures[m];
+                const dev = semanticModel.measures[m.toLowerCase()];
                 if (dev) {
                     pageUsedMeasures.push(dev);
-                    globalUsedMeasuresSet.add(m);
+                    globalUsedMeasuresSet.add(dev.name);
                 }
             }
             
             for (const c of deps.columns) {
-                const dev = semanticModel.columns[c];
+                const dev = semanticModel.columns[c.toLowerCase()];
                 if (dev) {
                     pageUsedColumns.push(dev);
-                    globalUsedColumnsSet.add(c);
+                    globalUsedColumnsSet.add(dev.name);
                 }
             }
 
