@@ -14,5 +14,4 @@ vsc-extension-quickstart.md
 pbip-lens-*.vsix
 .history/**
 .git/**
-images/logo.png
 !dist/**
