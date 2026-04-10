@@ -18,6 +18,27 @@ export class WorkspaceScanner {
 
     static async getTMDLFiles(basePath: string): Promise<string[]> {
         const tmdlFiles: string[] = [];
+        
+        let datasetDir = basePath;
+        try {
+            const rootEntries = fs.readdirSync(basePath, { withFileTypes: true });
+            const validDatasetFolder = rootEntries.find(e => 
+                e.isDirectory() && 
+                (e.name.endsWith('.Dataset') || e.name.endsWith('.SemanticModel')) &&
+                !e.name.toLowerCase().includes('backup') &&
+                !e.name.toLowerCase().includes('copy') &&
+                !e.name.toLowerCase().includes('copia')
+            );
+            if (validDatasetFolder) {
+                datasetDir = path.join(basePath, validDatasetFolder.name);
+                // Si existe la subcarpeta 'definition', limitarnos estrictamente a ella
+                const defPath = path.join(datasetDir, 'definition');
+                if (fs.existsSync(defPath)) {
+                    datasetDir = defPath;
+                }
+            }
+        } catch { /* fallback a basePath completo */ }
+
         const readRecursive = (dir: string) => {
             let entries;
             try {
@@ -27,6 +48,12 @@ export class WorkspaceScanner {
                 const fullPath = path.join(dir, entry.name);
                 if (entry.isDirectory()) {
                     if (entry.name !== 'node_modules' && entry.name !== '.git') {
+                        // Filtro de seguridad adicional para subcarpetas de backup y omisión explícita de TMDLScripts
+                        if (entry.name.toLowerCase().includes('backup') || 
+                            entry.name.toLowerCase().includes('history') ||
+                            entry.name.toLowerCase() === 'tmdlscripts') {
+                            continue;
+                        }
                         readRecursive(fullPath);
                     }
                 } else if (entry.isFile() && entry.name.endsWith('.tmdl')) {
@@ -34,7 +61,8 @@ export class WorkspaceScanner {
                 }
             }
         };
-        readRecursive(basePath);
+        
+        readRecursive(datasetDir);
         return tmdlFiles;
     }
 

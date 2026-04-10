@@ -2,7 +2,7 @@
   "name": "pbip-lens",
   "displayName": "PBIP Lens",
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.\"",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "Nara-Technologies",
   "repository": {
     "type": "git",
@@ -64,6 +64,22 @@
           "visibility": "visible",
           "showCollapseAll": true,
           "when": "pbip-lens.isAudited"
+        },
+        {
+          "id": "pbipLensQueriesView",
+          "name": "Consultas Power Query - ✦ preview",
+          "icon": "images/logo.png",
+          "visibility": "visible",
+          "showCollapseAll": true,
+          "when": "pbip-lens.isAudited && pbip-lens.previewEnabled"
+        },
+        {
+          "id": "pbipLensRelationshipsView",
+          "name": "Relaciones del Modelo - ⚙ dev",
+          "icon": "images/logo.png",
+          "visibility": "visible",
+          "showCollapseAll": false,
+          "when": "pbip-lens.isAudited && pbip-lens.devMode"
         }
       ]
     },
@@ -110,18 +126,38 @@
         "command": "pbip-lens.toggleViewMode",
         "title": "PBIP Lens: Toggle Group By Pages",
         "icon": "$(list-flat)"
+      },
+      {
+        "command": "pbip-lens.showMeasureDax",
+        "title": "Ver DAX",
+        "icon": "$(code)"
+      },
+      {
+        "command": "pbip-lens.showColumnDashboard",
+        "title": "Ver Detalles",
+        "icon": "$(info)"
+      },
+      {
+        "command": "pbip-lens.openFile",
+        "title": "Abrir Archivo",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "pbip-lens.showQueryM",
+        "title": "Ver Script M",
+        "icon": "$(code)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "pbip-lens.refreshAudit",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "navigation@1"
         },
         {
           "command": "pbip-lens.expandAll",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "navigation@2"
         },
         {
@@ -133,23 +169,28 @@
       "view/item/context": [
         {
           "command": "pbip-lens.expandItem",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "1_modification@1"
         },
         {
           "command": "pbip-lens.collapseItem",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "1_modification@2"
         },
         {
           "command": "pbip-lens.expandHierarchy",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "1_modification@3"
         },
         {
           "command": "pbip-lens.collapseHierarchy",
-          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView",
+          "when": "view == pbipLensMeasuresView || view == pbipLensTablesView || view == pbipLensQueriesView",
           "group": "1_modification@4"
+        },
+        {
+          "command": "pbip-lens.showQueryM",
+          "when": "view == pbipLensQueriesView && viewItem == query_item",
+          "group": "inline"
         }
       ]
     }

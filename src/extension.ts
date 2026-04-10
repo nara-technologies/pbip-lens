@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { PBIPAuditRunner } from './core/auditRunner';
-import { MeasuresTreeProvider, TablesTreeProvider } from './ui/treeDataProvider';
+import { MeasuresTreeProvider, TablesTreeProvider, RelationshipsTreeProvider, QueriesTreeProvider } from './ui/treeDataProvider';
 import { ColumnDefinition } from './core/models/SemanticModel';
+import { FeatureFlags } from './core/config/featureFlags';
 
 class MeasureDaxProvider implements vscode.TextDocumentContentProvider {
     private contents = new Map<string, string>();
@@ -23,7 +24,7 @@ class ColumnDashboardProvider implements vscode.TextDocumentContentProvider {
     }
 }
 
-function formatDaxToVirtualDocument(measureName: string, rawContent: string): string {
+function formatDaxToVirtualDocument(measureName: string, rawContent: string, filePath?: string): string {
     const lines = rawContent.split(/\r?\n/);
     const metadataLines: string[] = [];
     const daxLines: string[] = [];
@@ -54,6 +55,10 @@ function formatDaxToVirtualDocument(measureName: string, rawContent: string): st
         }
     }
 
+    if (filePath) {
+        metadataLines.unshift(`sourceFile: ${vscode.workspace.asRelativePath(filePath)}`);
+    }
+
     const finalMetadata = metadataLines.length > 0 ? metadataLines.join('\n') + '\n\n' : '';
     const finalDax = '\n--------------------\n-- DAX DEFINITION --\n--------------------\n' + daxLines.join('\n');
     return finalMetadata + finalDax;
@@ -63,10 +68,21 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('PBIP Lens is now active.');
     let lastResults: any = null;
 
+    // --- Feature Flags: Detectar modo de ejecución ---
+    const isDev = context.extensionMode === vscode.ExtensionMode.Development;
+    vscode.commands.executeCommand('setContext', 'pbip-lens.devMode', isDev);
+    vscode.commands.executeCommand('setContext', 'pbip-lens.previewEnabled', true);
+
+    if (isDev) {
+        console.log('[PBIP Lens] Ejecutando en modo DESARROLLO — todas las features visibles.');
+    }
+
     const measuresProvider = new MeasuresTreeProvider();
     const tablesProvider = new TablesTreeProvider();
+    const relationshipsProvider = new RelationshipsTreeProvider();
+    const queriesProvider = new QueriesTreeProvider();
 
-    // Create Tree Views to get API access (reveal, etc)
+    // Create Tree Views — solo creamos las habilitadas según feature flags
     const measuresTreeView = vscode.window.createTreeView('pbipLensMeasuresView', {
         treeDataProvider: measuresProvider,
         showCollapseAll: true
@@ -76,6 +92,19 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: tablesProvider,
         showCollapseAll: true
     });
+
+    const queriesTreeView = vscode.window.createTreeView('pbipLensQueriesView', {
+        treeDataProvider: queriesProvider,
+        showCollapseAll: true
+    });
+
+    // DEV-only: Relaciones solo se registra si estamos en modo desarrollo
+    const relationshipsTreeView = FeatureFlags.isEnabled('pbipLensRelationshipsView', isDev)
+        ? vscode.window.createTreeView('pbipLensRelationshipsView', {
+            treeDataProvider: relationshipsProvider,
+            showCollapseAll: false
+          })
+        : null;
 
     const runAuditCommand = vscode.commands.registerCommand('pbip-lens.runAudit', async () => {
         await vscode.window.withProgress({
@@ -91,6 +120,8 @@ export function activate(context: vscode.ExtensionContext) {
             lastResults = results;
             measuresProvider.refresh(results);
             tablesProvider.refresh(results);
+            relationshipsProvider.refresh(results);
+            queriesProvider.refresh(results);
             
             // Activate the views
             vscode.commands.executeCommand('setContext', 'pbip-lens.isAudited', true);
@@ -108,12 +139,29 @@ export function activate(context: vscode.ExtensionContext) {
     const daxProvider = new MeasureDaxProvider();
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('pbip-lens-dax', daxProvider));
 
-    const showMeasureDaxCommand = vscode.commands.registerCommand('pbip-lens.showMeasureDax', async (name: string, content: string) => {
+    const showMeasureDaxCommand = vscode.commands.registerCommand('pbip-lens.showMeasureDax', async (name: string, content: string, filePath?: string) => {
         const uri = vscode.Uri.parse(`pbip-lens-dax:${encodeURIComponent(name)}.dax`);
-        const formattedContent = formatDaxToVirtualDocument(name, content);
+        const formattedContent = formatDaxToVirtualDocument(name, content, filePath);
         daxProvider.setContent(uri.toString(), formattedContent);
         const doc = await vscode.workspace.openTextDocument(uri);
         vscode.languages.setTextDocumentLanguage(doc, 'dax');
+        vscode.window.showTextDocument(doc, { preview: true });
+    });
+
+    const queryMProvider = new MeasureDaxProvider();
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('pbip-lens-query', queryMProvider));
+
+    const showQueryMCommand = vscode.commands.registerCommand('pbip-lens.showQueryM', async (name: string, content: string) => {
+        const uri = vscode.Uri.parse(`pbip-lens-query:${encodeURIComponent(name)}.pq`);
+        const header = `// === Power Query: ${name} ===\n\n`;
+        queryMProvider.setContent(uri.toString(), header + content);
+        const doc = await vscode.workspace.openTextDocument(uri);
+        // 'powerquery' es el language ID del soporte nativo de M en VS Code
+        try {
+            vscode.languages.setTextDocumentLanguage(doc, 'powerquery');
+        } catch {
+            vscode.languages.setTextDocumentLanguage(doc, 'plaintext');
+        }
         vscode.window.showTextDocument(doc, { preview: true });
     });
 
@@ -182,29 +230,32 @@ export function activate(context: vscode.ExtensionContext) {
 
     const expandItemCommand = vscode.commands.registerCommand('pbip-lens.expandItem', (item: any) => {
         if (!item) { return; }
-        const view = item.tableData ? tablesTreeView : measuresTreeView;
+        const view = (item.id && item.id.startsWith('table_')) ? tablesTreeView : measuresTreeView;
         view.reveal(item, { expand: 1, select: false, focus: true });
     });
 
     const expandHierarchyCommand = vscode.commands.registerCommand('pbip-lens.expandHierarchy', async (item: any) => {
         if (!item) { return; }
-        const view = item.tableData ? tablesTreeView : measuresTreeView;
+        const view = (item.id && item.id.startsWith('table_')) ? tablesTreeView : measuresTreeView;
         // Expand deeper levels (up to 3 levels usually covers everything relevant)
         await view.reveal(item, { expand: 3, select: false, focus: true });
     });
 
-    const collapseItemCommand = vscode.commands.registerCommand('pbip-lens.collapseItem', (item: any) => {
+    const collapseItemCommand = vscode.commands.registerCommand('pbip-lens.collapseItem', async (item: any) => {
         if (!item) { return; }
-        // VS Code doesn't have a direct "collapse" API for a single item.
-        // We trigger a global refresh which resets nodes to their default state (Collapsed)
-        measuresProvider.refresh();
-        tablesProvider.refresh();
+        const view = (item.id && item.id.startsWith('table_')) ? tablesTreeView : measuresTreeView;
+        await view.reveal(item, { select: true, focus: true });
+        await vscode.commands.executeCommand('list.collapse');
     });
 
-    const collapseHierarchyCommand = vscode.commands.registerCommand('pbip-lens.collapseHierarchy', (item: any) => {
+    const collapseHierarchyCommand = vscode.commands.registerCommand('pbip-lens.collapseHierarchy', async (item: any) => {
         if (!item) { return; }
-        measuresProvider.refresh();
-        tablesProvider.refresh();
+        const view = (item.id && item.id.startsWith('table_')) ? tablesTreeView : measuresTreeView;
+        await view.reveal(item, { select: true, focus: true });
+        // En VS Code, si contraes un elemento las sub-jerarquías mantienen su estado cacheado interno 
+        // a menos que las contraigas recursivamente. La forma nativa (teclado) es equivalente.
+        // Haremos un collapse sencillo ya que list.collapseAll afectaría la vista entera.
+        await vscode.commands.executeCommand('list.collapse');
     });
 
     const toggleViewCommand = vscode.commands.registerCommand('pbip-lens.toggleViewMode', () => {
@@ -214,6 +265,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         measuresTreeView,
         tablesTreeView,
+        queriesTreeView,
         runAuditCommand, 
         refreshAuditCommand, 
         expandAllCommand, 
@@ -222,10 +274,16 @@ export function activate(context: vscode.ExtensionContext) {
         collapseItemCommand,
         collapseHierarchyCommand,
         openFileCommand, 
-        showMeasureDaxCommand, 
+        showMeasureDaxCommand,
+        showQueryMCommand,
         showColumnDashboardCommand, 
         toggleViewCommand
     );
+
+    // Solo añadir la vista DEV a subscriptions si fue creada
+    if (relationshipsTreeView) {
+        context.subscriptions.push(relationshipsTreeView);
+    }
 }
 
 export function deactivate() {}

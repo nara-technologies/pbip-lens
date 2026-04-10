@@ -8,12 +8,21 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
     
     protected auditResult: AuditResult | undefined;
     protected forceExpanded: boolean = false;
+    protected parentMap = new Map<string, MeasureItem>();
 
     refresh(result?: AuditResult): void {
         if (result) {
             this.auditResult = result;
         }
+        this.parentMap.clear();
         this._onDidChangeTreeData.fire();
+    }
+
+    getParent(element: MeasureItem): MeasureItem | undefined {
+        if (element.id) {
+            return this.parentMap.get(element.id);
+        }
+        return undefined;
     }
 
     expandAll(): void {
@@ -87,7 +96,20 @@ export abstract class BaseTreeProvider implements vscode.TreeDataProvider<Measur
         return Promise.resolve([]);
     }
 
-    abstract getChildren(element?: MeasureItem): Thenable<MeasureItem[]>;
+    abstract getChildrenImpl(element?: MeasureItem): Thenable<MeasureItem[]>;
+
+    getChildren(element?: MeasureItem): Thenable<MeasureItem[]> {
+        return this.getChildrenImpl(element).then(children => {
+            if (element && children) {
+                children.forEach(child => {
+                    if (child.id) {
+                        this.parentMap.set(child.id, element);
+                    }
+                });
+            }
+            return children;
+        });
+    }
 }
 
 export class MeasuresTreeProvider extends BaseTreeProvider {
@@ -99,7 +121,7 @@ export class MeasuresTreeProvider extends BaseTreeProvider {
         vscode.window.showInformationMessage(`Vista cambiada a: ${this.groupByPage ? 'Por Páginas' : 'Global'}`);
     }
 
-    getChildren(element?: MeasureItem): Thenable<MeasureItem[]> {
+    getChildrenImpl(element?: MeasureItem): Thenable<MeasureItem[]> {
         if (!this.auditResult) {
             return Promise.resolve([]);
         }
@@ -161,7 +183,7 @@ export class MeasuresTreeProvider extends BaseTreeProvider {
 }
 
 export class TablesTreeProvider extends BaseTreeProvider {
-    getChildren(element?: MeasureItem): Thenable<MeasureItem[]> {
+    getChildrenImpl(element?: MeasureItem): Thenable<MeasureItem[]> {
         if (!this.auditResult) {
             return Promise.resolve([]);
         }
@@ -187,9 +209,37 @@ export class TablesTreeProvider extends BaseTreeProvider {
         }
 
         if (element.contextValue === 'table_measures' && element.tableData) {
-            return Promise.resolve(element.tableData.measures.map(mName => {
-                const m = this.auditResult!.semanticModel.measures[mName.toLowerCase()];
-                return new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${mName}`);
+            const measuresInTable = element.tableData.measures.map(mName => this.auditResult!.semanticModel.measures[mName.toLowerCase()]);
+            const rootMeasures: MeasureDefinition[] = [];
+            const folders: { [folderName: string]: MeasureDefinition[] } = {};
+
+            for (const m of measuresInTable) {
+                if (m.displayFolder) {
+                if (!folders[m.displayFolder]) { folders[m.displayFolder] = []; }
+                    folders[m.displayFolder].push(m);
+                } else {
+                    rootMeasures.push(m);
+                }
+            }
+
+            const children: MeasureItem[] = [];
+            for (const folderName of Object.keys(folders).sort()) {
+                children.push(new MeasureItem(folderName, this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, 'measure_folder', undefined, undefined, undefined, undefined, element.tableData, `${element.id}/folder_${folderName}`, folderName));
+            }
+            for (const m of rootMeasures.sort((a,b) => a.name.localeCompare(b.name))) {
+                children.push(new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${m.name}`));
+            }
+            return Promise.resolve(children);
+        }
+
+        if (element.contextValue === 'measure_folder' && element.tableData && element.folderName) {
+            const folderMeasures = element.tableData.measures
+                .map(mName => this.auditResult!.semanticModel.measures[mName.toLowerCase()])
+                .filter(m => m.displayFolder === element.folderName)
+                .sort((a,b) => a.name.localeCompare(b.name));
+            
+            return Promise.resolve(folderMeasures.map(m => {
+                return new MeasureItem(m.name, (m.dependencies.length > 0 || m.usedBy.length > 0) ? (this.forceExpanded ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed) : vscode.TreeItemCollapsibleState.None, 'measure_item', m.filePath, undefined, m, undefined, undefined, `${element.id}/${m.name}`);
             }));
         }
 
@@ -207,7 +257,8 @@ export class MeasureItem extends vscode.TreeItem {
         public readonly measureData?: MeasureDefinition,
         public readonly columnData?: ColumnDefinition,
         public readonly tableData?: TableDefinition,
-        public override readonly id?: string
+        public override readonly id?: string,
+        public readonly folderName?: string
     ) {
         super(label, collapsibleState);
         this.id = id;
@@ -217,7 +268,7 @@ export class MeasureItem extends vscode.TreeItem {
             if (measureData) {
                 this.iconPath = new vscode.ThemeIcon('symbol-variable');
                 if (measureData.content) {
-                    this.command = { command: 'pbip-lens.showMeasureDax', title: 'Ver DAX', arguments: [measureData.name, measureData.content] };
+                    this.command = { command: 'pbip-lens.showMeasureDax', title: 'Ver DAX', arguments: [measureData.name, measureData.content, filePath || measureData.filePath] };
                 }
             } else if (columnData) {
                 this.iconPath = new vscode.ThemeIcon('symbol-field');
@@ -235,9 +286,84 @@ export class MeasureItem extends vscode.TreeItem {
             this.iconPath = new vscode.ThemeIcon('table');
         } else if (contextValue === 'page') {
             this.iconPath = new vscode.ThemeIcon('layout');
+        } else if (contextValue === 'measure_folder') {
+            this.iconPath = new vscode.ThemeIcon('folder');
+        } else if (contextValue === 'relationship_item') {
+            this.iconPath = new vscode.ThemeIcon('arrow-swap');
+        } else if (contextValue === 'query_group') {
+            this.iconPath = new vscode.ThemeIcon('repo');
+        } else if (contextValue === 'query_item') {
+            this.iconPath = new vscode.ThemeIcon('code');
         } else {
             // Folders (pages_used, table_columns, etc)
             this.iconPath = new vscode.ThemeIcon('folder');
         }
+    }
+}
+
+export class RelationshipsTreeProvider extends BaseTreeProvider {
+    getChildrenImpl(element?: MeasureItem): Thenable<MeasureItem[]> {
+        if (!this.auditResult) {
+            return Promise.resolve([]);
+        }
+
+        if (!element) {
+            return Promise.resolve(this.auditResult.semanticModel.relationships.map(r => {
+                const label = `${r.fromTable}[${r.fromColumn}] ↔ ${r.toTable}[${r.toColumn}]`;
+                const item = new MeasureItem(label, vscode.TreeItemCollapsibleState.None, 'relationship_item', undefined, undefined, undefined, undefined, undefined, `rel_${r.name}`);
+                item.description = r.crossFilteringBehavior;
+                return item;
+            }));
+        }
+
+        return Promise.resolve([]);
+    }
+}
+
+export class QueriesTreeProvider extends BaseTreeProvider {
+    getChildrenImpl(element?: MeasureItem): Thenable<MeasureItem[]> {
+        if (!this.auditResult) {
+            return Promise.resolve([]);
+        }
+
+        if (!element) {
+            const queries = this.auditResult.semanticModel.queries;
+            const groups: { [group: string]: any[] } = {};
+            const rootQueries: any[] = [];
+
+            for (const q of queries) {
+                if (q.group) {
+                    if (!groups[q.group]) { groups[q.group] = []; }
+                    groups[q.group].push(q);
+                } else {
+                    rootQueries.push(q);
+                }
+            }
+
+            const children: MeasureItem[] = [];
+            for (const groupName of Object.keys(groups).sort()) {
+                children.push(new MeasureItem(groupName, vscode.TreeItemCollapsibleState.Collapsed, 'query_group', undefined, undefined, undefined, undefined, undefined, `qgroup_${groupName}`, groupName));
+            }
+            for (const q of rootQueries.sort((a, b) => a.name.localeCompare(b.name))) {
+                const item = new MeasureItem(q.name, vscode.TreeItemCollapsibleState.None, 'query_item', undefined, undefined, undefined, undefined, undefined, `query_${q.name}`);
+                item.command = { command: 'pbip-lens.showQueryM', title: 'Ver M', arguments: [q.name, q.content] };
+                children.push(item);
+            }
+            return Promise.resolve(children);
+        }
+
+        if (element.contextValue === 'query_group' && element.folderName) {
+            const folderQueries = this.auditResult.semanticModel.queries
+                .filter(q => q.group === element.folderName)
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            return Promise.resolve(folderQueries.map(q => {
+                const item = new MeasureItem(q.name, vscode.TreeItemCollapsibleState.None, 'query_item', undefined, undefined, undefined, undefined, undefined, `query_${q.name}`);
+                item.command = { command: 'pbip-lens.showQueryM', title: 'Ver M', arguments: [q.name, q.content] };
+                return item;
+            }));
+        }
+
+        return Promise.resolve([]);
     }
 }

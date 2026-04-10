@@ -15,3 +15,5 @@ pbip-lens-*.vsix
 .history/**
 .git/**
 !dist/**
+test/
+scripts/

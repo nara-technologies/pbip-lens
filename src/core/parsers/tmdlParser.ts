@@ -6,10 +6,12 @@ export class TMDLParser {
         const semanticModel: SemanticModel = {
             measures: {},
             columns: {},
-            tables: {}
+            tables: {},
+            relationships: [],
+            queries: []
         };
 
-        const objectRegex = /^\s*(measure|column|partition|hierarchy|table|relationship|role)\s+(?:'([^']+)'|"([^"]+)"|([^=\s]+))/i;
+        const objectRegex = /^\s*(measure|column|partition|hierarchy|table|relationship|role|expression)\s+(?:'([^']+)'|"([^"]+)"|([^=\s]+))/i;
         const sortByRegex = /^\s*sortByColumn\s*:\s*(?:'([^']+)'|"([^"]+)"|([^\s\n]+))/i;
         const relColumnRegex = /^\s*(fromColumn|toColumn)\s*:\s*(.*)$/i;
         // El RLS puede tener filtros explícitos sobre columnas: filterExpression: 'Table'[Col] = ... 
@@ -24,6 +26,7 @@ export class TMDLParser {
         let pendingSortByTargets: { sourceCol: string, targetCol: string }[] = [];
         let relationshipKeys: string[] = []; // Array of specific column names used as keys
         let rlsExpressions: string[] = [];
+        let currentFilePath = '';
 
         const flushObject = () => {
             if (!currentObjectType || !currentObjectName) {
@@ -32,11 +35,18 @@ export class TMDLParser {
             const body = currentObjectLines.join('\n');
             
             if (currentObjectType === 'measure' && currentTable) {
+                const folderMatch = currentObjectLines.find(l => l.trim().startsWith('displayFolder:'));
+                let dFolder;
+                if (folderMatch) {
+                    dFolder = folderMatch.split('displayFolder:')[1].trim();
+                }
+
                 const measureKey = currentObjectName.toLowerCase();
                 semanticModel.measures[measureKey] = {
                     name: currentObjectName,
                     tableName: currentTable,
-                    filePath: '', 
+                    filePath: currentFilePath, 
+                    displayFolder: dFolder,
                     dependencies: [],
                     usedBy: [],
                     content: body
@@ -64,7 +74,13 @@ export class TMDLParser {
                 const dataTypeMatch = currentObjectLines.find(l => l.trim().startsWith('dataType:'));
                 let dtype = 'string';
                 if (dataTypeMatch) {
-                    dtype = dataTypeMatch.split(':')[1].trim();
+                    dtype = dataTypeMatch.split('dataType:')[1].trim();
+                }
+
+                const folderMatch = currentObjectLines.find(l => l.trim().startsWith('displayFolder:'));
+                let dFolder;
+                if (folderMatch) {
+                    dFolder = folderMatch.split('displayFolder:')[1].trim();
                 }
 
                 const columnKey = currentObjectName.toLowerCase();
@@ -74,6 +90,8 @@ export class TMDLParser {
                     dataType: dtype,
                     sourceColumn: srcCol,
                     isCalculated: isCalc,
+                    filePath: currentFilePath,
+                    displayFolder: dFolder,
                     dependencies: [],
                     usedBy: [],
                     content: body,
@@ -98,6 +116,27 @@ export class TMDLParser {
                 }
 
             } else if (currentObjectType === 'relationship') {
+                let fromCol = '', toCol = '', behavior = 'Single';
+                for (const line of currentObjectLines) {
+                    if (line.trim().startsWith('fromColumn:')) {
+                        fromCol = line.split('fromColumn:')[1].trim();
+                    } else if (line.trim().startsWith('toColumn:')) {
+                        toCol = line.split('toColumn:')[1].trim();
+                    } else if (line.trim().startsWith('crossFilteringBehavior:')) {
+                        behavior = line.split('crossFilteringBehavior:')[1].trim();
+                    }
+                }
+                const fromParts = fromCol.split('.');
+                const toParts = toCol.split('.');
+                semanticModel.relationships.push({
+                    name: currentObjectName,
+                    fromTable: fromParts.length > 1 ? fromParts[0].trim() : '',
+                    fromColumn: fromParts.length > 1 ? fromParts[1].trim() : fromCol,
+                    toTable: toParts.length > 1 ? toParts[0].trim() : '',
+                    toColumn: toParts.length > 1 ? toParts[1].trim() : toCol,
+                    crossFilteringBehavior: behavior
+                });
+
                 for (const line of currentObjectLines) {
                     const relMatch = relColumnRegex.exec(line);
                     if (relMatch && relMatch[2]) {
@@ -118,6 +157,23 @@ export class TMDLParser {
                         relationshipKeys.push(colName.trim());
                     }
                 }
+            } else if (currentObjectType === 'partition') {
+                const groupMatch = currentObjectLines.find(l => l.trim().startsWith('queryGroup:'));
+                let qGroup;
+                if (groupMatch) {
+                    qGroup = groupMatch.split('queryGroup:')[1].trim();
+                }
+                semanticModel.queries.push({
+                    name: currentObjectName,
+                    group: qGroup,
+                    content: body
+                });
+            } else if (currentObjectType === 'expression') {
+                semanticModel.queries.push({
+                    name: currentObjectName,
+                    group: 'Expressions',
+                    content: body
+                });
             } else if (currentObjectType === 'role') {
                 for (const line of currentObjectLines) {
                     // Simple logic to extract DAX filters
@@ -135,6 +191,7 @@ export class TMDLParser {
         };
 
         for (const file of tmdlFiles) {
+            currentFilePath = file;
             const content = fs.readFileSync(file, 'utf8');
             const lines = content.split(/\r?\n/);
 
