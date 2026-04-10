@@ -5,6 +5,26 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-04-10
+
+### Added
+- **Modular Semantic Model**: Limited scanning strictly to the `definition/` directory, ignoring artifacts in `TMDLScripts` or history.
+- **Display Folders Support**: Measures and Columns are now grouped by their `displayFolder` property in the tree views.
+- **Queries Explorer (✦ preview)**: New view to browse Power Query (M) scripts, partitions, and global expressions.
+- **Relationships Explorer (⚙ dev)**: Initial support for browsing model relationships (visible in development mode).
+- **Advanced Metadata**: Measures now include `filePath` and lineage metadata for easier auditing.
+- **Feature Flags System**: Robust state management (`dev`/`preview`/`prod`) to control feature visibility and badging.
+- **Native Stress Tester**: Enhanced `stress_tester.py` to inject 8,000+ clonic measures with real DAX logic and cross-references.
+
+### Changed
+- **Parser Optimization**: TMDL Parser now extracts `displayFolder`, M expressions, and Relationships metadata.
+- **UI Refactoring**: Improved lifecycle management for Tree Views (preventing leaks) and synced hierarchy commands (Expand/Collapse) across all new explorers.
+
+### Fixed
+- **View Registration**: Corrected registration of secondary views to prevent "TreeDataProvider not found" errors during hierarchy expansion.
+- **File Scanner**: Fixed issue where stale TMDL scripts from peripheral folders were causing duplicate measure warnings.
+
+
 ## [0.1.2] - 2026-04-08
 
 ### Added

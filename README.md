@@ -3,7 +3,7 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)
-![Status: Production Ready](https://img.shields.io/badge/Status-v0.1.2--Stable-green.svg)
+![Status: Production Ready](https://img.shields.io/badge/Status-v0.1.3--Stable-green.svg)
 
 **PBIP Lens** es una herramienta de análisis de impacto y dependencias estáticas para archivos de proyectos de Power BI (`.pbip`, `.tmdl`, `.pbir`).
 
@@ -26,18 +26,18 @@ Identifica instantáneamente qué medidas están sosteniendo tu reporte y cuále
 * **✅ En Uso:** Medidas detectadas dentro de las estructuras JSON de los visuales del reporte (incluso en formatos dinámicos y títulos).
 * **⚠️ Huérfanas:** Medidas definidas en el modelo que no tienen ningún impacto visual en el reporte actual.
 * **Grafo de Dependencias DAX:** Despliega cualquier medida para ver su linaje (`Usa a` / `Usada por`). Si una medida no está en un visual, pero alimenta a una medida superior, el árbol de dependencias te avisará antes de que cometas un error.
+* **Organización por Carpetas:** Soporte nativo para `displayFolder`. Las medidas se agrupan automáticamente siguiendo la estructura lógica definida en Power BI Desktop.
 
 ### 2. Auditoría Quirúrgica de Columnas (Tables Explorer)
+Organiza tus tablas y columnas con el mismo nivel de detalle que las medidas, incluyendo agrupación por carpetas y navegación al código fuente.
 
-No evalúes las columnas solo por su uso visual. PBIP Lens realiza un escaneo de 5 frentes de seguridad antes de sugerir que una columna es prescindible. Genera un reporte detallado en Markdown evaluando:
+### 3. Explorador de Consultas (Queries Explorer - ✦ preview)
+Visualiza los scripts de Power Query (M) directamente en VS Code. PBIP Lens extrae el código M de las particiones y expresiones globales, permitiéndote auditar la lógica de transformación sin abrir el Editor de Power Query.
 
-* 📊 Uso en visuales del PBIX.
-* 🧮 Referencias en código DAX (Medidas, Columnas Calculadas).
-* 🔗 Uso como Llave de Relación (Primary/Foreign Key).
-* 🔀 Uso como objetivo de ordenamiento (*Sort-By Target*).
-* 🔐 Implicaciones en la Seguridad a Nivel de Fila (RLS).
+### 4. Relaciones del Modelo (Relationships - ⚙ dev)
+(Funcionalidad en desarrollo) Explora las conexiones entre tablas para entender la integridad referencial del modelo.
 
-### 3. Navegación Nativa
+### 5. Navegación Nativa
 
 Haz clic en cualquier medida o columna en el explorador y PBIP Lens abrirá instantáneamente el archivo `.tmdl` correspondiente, llevándote directo al código fuente para auditarlo o editarlo.
 
