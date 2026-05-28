@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'none'; img-src {{cspSource}}; style-src {{cspSource}}; script-src 'nonce-{{nonce}}';">
+    <link rel="stylesheet" href="{{stylesUri}}">
+    <title>PBIP Lens</title>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <!-- Left: Context -->
+        <div class="nav-left">
+            <span class="folder-icon">📂</span>
+            <span id="project-name" class="project-name-text">Semantic Model Intelligence</span>
+            <button class="refresh-btn" id="refresh-btn" title="Refresh Project">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.681 3H2V2h4.5l.5.5V7H6V4.382C4.787 5.29 4 6.78 4 8.5c0 2.485 2.015 4.5 4.5 4.5s4.5-2.015 4.5-4.5c0-1.72-.787-3.21-2-4.118V3.244c1.794 1.02 3 2.97 3 5.256 0 3.314-2.686 6-6 6s-6-2.686-6-6c0-2.286 1.206-4.237 3-5.256v1.012z"/>
+                </svg>
+            </button>
+        </div>
+        <!-- Center: Main Action -->
+        <div class="nav-center">
+            <div class="search-wrapper">
+                <span class="search-icon">⌕</span>
+                <input type="text" id="search-input" class="search-input"
+                       placeholder="Search measure, table or visual..." autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+        <!-- Right: Branding -->
+        <div class="nav-right">
+            <span class="branding-version">PBIP LENS v1.0.0-rc</span>
+            <span class="branding-logo">
+                <img src="{{logoDarkUri}}" alt="PBIP Lens Logo" class="logo-img logo-dark-theme">
+                <img src="{{logoLightUri}}" alt="PBIP Lens Logo" class="logo-img logo-light-theme">
+            </span>
+        </div>
+    </div>
+
+    <!-- App Mount Point -->
+    <div id="app">
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">◇</div>
+            <div class="empty-title">No Analysis Data</div>
+            <div class="empty-subtitle">Run the "PBIP Lens: Analyze Workspace" command to scan the semantic model.</div>
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <!-- Status -->
+            <div style="margin-bottom: 20px;">
+                <span class="status-badge ready" id="status-badge">
+                    <span class="dot"></span>
+                    <span id="status-text">Model loaded</span>
+                </span>
+            </div>
+
+            <!-- Health & Status Side-by-Side Grid -->
+            <div class="health-status-row">
+                <!-- Project Health -->
+                <div class="section">
+                    <div class="section-title">Project Health</div>
+                    <div class="health-card">
+                        <div class="health-donut" id="health-donut">
+                            <div class="health-score-inner">
+                                <span id="health-score-text">100</span><span class="health-percent">%</span>
+                            </div>
+                        </div>
+                        <div class="health-details">
+                            <div class="health-title">Structural Integrity</div>
+                            <div class="health-subtitle" id="health-orphans-text">0 orphan measures</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Breakdown -->
+                <div class="section">
+                    <div class="section-title">Usage Breakdown</div>
+                    <div class="usage-breakdown">
+                        <div class="usage-header">
+                            <span>Measures in use</span>
+                            <span id="usage-text">0 / 0 (0%)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="usage-bar" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="section">
+                <div class="section-title">Model Metrics</div>
+                <div class="metrics-grid stagger" id="metrics-grid"></div>
+            </div>
+
+            <!-- Audit: Findings and Risks -->
+            <div class="section">
+                <div class="section-title">Findings and Risks</div>
+                <div class="audit-card">
+                    <div id="orphan-results" class="orphan-results"></div>
+                </div>
+            </div>
+
+            <!-- Lineage View -->
+            <div id="lineage-view" class="lineage-container" style="display: none;">
+                <div class="lineage-column" id="lineage-used-by">
+                    <div class="lineage-column-header">← Used by</div>
+                    <div class="lineage-column-body" id="used-by-list"></div>
+                </div>
+                <div class="lineage-column lineage-center" id="lineage-center">
+                    <div class="lineage-column-header">Main Node</div>
+                    <div class="lineage-column-body" id="center-node"></div>
+                </div>
+                <div class="lineage-column" id="lineage-depends-on">
+                    <div class="lineage-column-header">Depends on →</div>
+                    <div class="lineage-column-body" id="depends-on-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script nonce="{{nonce}}" src="{{scriptUri}}"></script>
+</body>
+</html>

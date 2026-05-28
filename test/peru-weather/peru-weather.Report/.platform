@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "peru-weather"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c11c33e4-2761-4854-8714-1f82a6e2a3b3"
+  }
+}

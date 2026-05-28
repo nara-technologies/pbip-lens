@@ -1,0 +1,21 @@
+model Model
+	culture: es-PE
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-ES
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["ClimaPeru","Deptos","_Measures"]
+
+annotation PBI_ProTooling = ["DevMode","TMDL-Extension"]
+
+ref table ClimaPeru
+ref table Deptos
+ref table _Measures
+ref table 'Ver por'
+
+ref cultureInfo es-PE
+

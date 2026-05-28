@@ -1,0 +1,1387 @@
+table _Measures
+	lineageTag: 5ea4eefd-8d8f-4a3c-bace-838f8f7033f0
+
+	measure '002. Temp. Min. Card.' = ```
+			
+			/*Values*/
+			VAR _rowMinTemp = TOPN(1, ClimaPeru, ClimaPeru[temp_min], ASC)
+			VAR _temp_min = MINX(_rowMinTemp, ClimaPeru[temp_min])
+			VAR _fecha = FORMAT(MAXX(_rowMinTemp, ClimaPeru[Fecha]), "D-MMM-YYYY")
+			VAR _hora = FORMAT(MAXX(_rowMinTemp, ClimaPeru[Hora]), "h:mm AM/PM")
+			
+			VAR _ciudad_prov = MAXX(_rowMinTemp, RELATED(Deptos[NOMBRE_PROV]))
+			VAR _ciudad_dpto = MAXX(_rowMinTemp, RELATED(Deptos[NOMBRE_REGION]))
+			VAR _ciudad = _ciudad_prov & " - " & _ciudad_dpto
+			
+			VAR _viento = MAXX(_rowMinTemp, ClimaPeru[Viento])
+			VAR _humedad = MAXX(_rowMinTemp, ClimaPeru[Humedad])
+			VAR _presion = MAXX(_rowMinTemp, ClimaPeru[Presion])
+			VAR _descripcion = MAXX(_rowMinTemp, ClimaPeru[descripcion])
+			
+			
+			/*Icons weather description*/
+			VAR _url = 
+			    SWITCH(
+			        _descripcion,
+			        "clear sky", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-day.svg",
+			        "few clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day.svg",
+			        "scattered clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/cloudy.svg",
+			        "broken clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast-day.svg",
+			        "overcast clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast.svg",
+			        "light rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-rain.svg",
+			        "moderate rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/rain.svg",
+			        "heavy intensity rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-rain.svg",
+			        "snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/snow.svg",
+			        "light snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-snow.svg",
+			        "heavy snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-snow.svg",
+			        "fog", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/fog.svg",
+			        "haze", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/haze.svg"
+			    )
+			
+			/*Descripcion del clima - ES-PE*/
+			VAR _descripcionES =
+			    SWITCH(
+			        TRUE(),
+			        _descripcion = "clear sky", "Cielo despejado",
+			        _descripcion = "few clouds", "Parcialmente nublado",
+			        _descripcion = "scattered clouds", "Nubes dispersas",
+			        _descripcion = "broken clouds", "Mayormente nublado",
+			        _descripcion = "overcast clouds", "Nublado",
+			        _descripcion = "light rain", "Lluvia ligera",
+			        _descripcion = "moderate rain", "Lluvia moderada",
+			        _descripcion = "heavy intensity rain", "Lluvia fuerte",
+			        _descripcion = "snow", "Nieve",
+			        _descripcion = "light snow", "Nieve ligera",
+			        _descripcion = "heavy snow", "Nieve fuerte",
+			        _descripcion = "fog", "Niebla",
+			        _descripcion = "haze", "Neblina",
+			        ""
+			    )
+			
+			
+			
+			
+			/*Color de gradiente de fondo */
+			VAR _color_gradiente_bg_1 = "#C5DFF5"       //----------- #89cff0 para T Max
+			VAR _color_gradiente_bg_2 = "#F7F9FA"       //----------- #6fb3f2 para T Max
+			
+			VAR _gradient = _color_gradiente_bg_1 & ", " & _color_gradiente_bg_2  //  No modificar
+			
+			
+			/*Tipografía*/
+			VAR _color_font = "#03204b"                    //----------- #fff para T Max  
+			VAR _font_family = "'Poppins'"
+			
+			
+			VAR _header = "Temperatura Mínima"
+			
+			/*Color Waves*/
+			VAR _color_waves = "rgba(114,172,248,0.45)" //----------- rgba(255,255,255,0.30)  
+			
+			
+			RETURN
+			
+			"
+			<!DOCTYPE html>
+			<html lang='es'>
+			<head>
+			  <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap' rel='stylesheet'>
+			  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'>
+			
+			  <style>
+			    :root {
+			      --gap-vertical: 12px;
+			      --gap-horizontal: 45px;
+			      --wave-height: 110px;
+			      --wave-speed: 40s;
+			      --wave-opacity: 0.32;
+			      --wave-rotate: 0deg;
+			    }
+			
+			    body {
+			      font-family: "& _font_family &", sans-serif;
+			      background: #ffffff00;
+			      display: flex;
+			      justify-content: center;
+			      align-items: center;
+			      height: 120vh;
+			      margin: 0;
+			    }
+			
+			    .card {
+			      position: relative;
+			      background: linear-gradient(to bottom right, "& _gradient &");
+			      color: " & _color_font & ";
+			      width: 100%;
+			      border-radius: 18px;
+			      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+			      padding: 15px;
+			      overflow: hidden;
+			    }
+			
+			    .wave {
+			      position: absolute;
+			      bottom: -6px;
+			      left: 0;
+			      width: 200%;
+			      height: var(--wave-height);
+			      transform: rotate(var(--wave-rotate));
+			      transform-origin: left bottom;
+			      z-index: 1;
+			      pointer-events: none;
+			      opacity: var(--wave-opacity);
+			      overflow: hidden;
+			    }
+			
+			    .wave__inner {
+			      width: 200%;
+			      height: 100%;
+			      display: flex;
+			      align-items: flex-end;
+			      animation: waveShift var(--wave-speed) linear infinite;
+			    }
+			
+			    .wave__inner svg {
+			      width: 50%;
+			      height: 100%;
+			      display: block;
+			    }
+			
+			    .wave__inner svg:first-child {
+			      margin-right: -1px;
+			    }
+			
+			    @keyframes waveShift {
+			      from { transform: translateX(0); }
+			      to   { transform: translateX(-50%); }
+			    }
+			
+			    .card *:not(.wave):not(.wave *) {
+			      position: relative;
+			      z-index: 2;
+			    }
+			
+			    .card-header {
+			      display: flex;
+			      align-items: center;
+			      font-size: 1.7rem;
+			      font-weight: 500;
+			      margin-bottom: 15px;
+			    }
+			
+			    .card-header i {
+			      margin-right: 8px;
+			      font-size: 1.5rem;
+			      font-weight: 400;
+			    }
+			
+			    .weather {
+			      display: flex;
+			      align-items: center;
+			      justify-content: space-between;
+			      margin-bottom: 10px;
+			    }
+			
+			    .temp {
+			      font-size: 3rem;
+			      font-weight: 500;
+			    }
+			
+			    .icon {
+			      text-align: center;
+			      margin-right: 4rem;
+			    }
+			
+			    .icon img {
+			      width: 18rem;
+			      max-width: 120px
+			    }
+			
+			    .icon div {
+			      font-size: 1rem;
+			      margin-top: 3px;
+			    }
+			
+			    .details {
+			        display: grid;
+			        grid-template-columns: 1fr 1fr;
+			        row-gap: var(--gap-vertical);
+			        column-gap: var(--gap-horizontal);
+			        font-size: 1.3rem;
+			    }
+			
+			    .details div {
+			        display: flex;
+			        align-items: center;
+			        gap: 10px;
+			        min-width: 0;
+			    }
+			
+			    .details i {
+			        font-size: 1.3rem;
+			        flex-shrink: 0;
+			    }
+			
+			
+			    .details div span {
+			        overflow: hidden;
+			        text-overflow: ellipsis; 
+			        white-space: nowrap;
+			        display: inline-block;
+			    }
+			
+			  </style>
+			</head>
+			<body>
+			
+			  <div class='card'>
+			    <div class='wave' aria-hidden='true'>
+			      <div class='wave__inner'>
+			        <svg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'>
+			          <path d='
+			            M0 60
+			            C75 0 225 0 300 60
+			            C375 120 525 120 600 60
+			            C675 0 825 0 900 60
+			            C975 120 1125 120 1200 60
+			            L1200 120 L0 120 Z'
+			            fill='" & _color_waves & "' />
+			        </svg>
+			        <svg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'>
+			          <path d='
+			            M0 60
+			            C75 0 225 0 300 60
+			            C375 120 525 120 600 60
+			            C675 0 825 0 900 60
+			            C975 120 1125 120 1200 60
+			            L1200 120 L0 120 Z'
+			            fill='" & _color_waves & "' />
+			        </svg>
+			      </div>
+			    </div>
+			
+			    <div class='card-header'>
+			        <img src='https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/thermometer-colder.svg' width='72' style='margin-right:8px;'>
+			        "& _header &"
+			    </div>
+			
+			    <div class='weather'>
+			      <div class='temp'>" & _temp_min & " C°</div>
+			      <div class='icon'>
+			        <img id='weatherIcon' src='" & _url & "' alt='" & _descripcionES & "'>
+			    <div>" & _descripcionES & "</div>
+			      </div>
+			    </div>
+			
+			    <div class='details'>
+			        <div><i class='fa-solid fa-location-dot'></i><span>" & _ciudad & "</span></div>
+			        <div><i class='fa-solid fa-wind'></i><span>" & _viento & " Km/h</span></div>
+			
+			        <div><i class='fa-regular fa-calendar'></i><span>" & _fecha & "</span></div>
+			        <div><i class='fa-solid fa-droplet'></i><span>" & _humedad & " %</span></div>
+			
+			        <div><i class='fa-regular fa-clock'></i><span>" & _hora & "</span></div>
+			        <div><i class='fa-solid fa-gauge-high'></i><span>" & _presion & " hPa</span></div>
+			    </div>
+			
+			  </div>
+			
+			</body>
+			</html>
+			
+			"
+			```
+		lineageTag: 9a7d99a4-ff81-4a20-9649-860f49376640
+
+	measure '001. Avg Temp' = AVERAGE(ClimaPeru[temperatura])
+		lineageTag: cafd525b-5cb4-4240-a315-1739319e4f28
+
+		formatStringDefinition = "0.0# °C"
+
+	measure '000. Provincia' = SELECTEDVALUE(Deptos[NOMBRE_PROV])
+		lineageTag: 1a967c11-88a3-4699-bbe5-a4db18c4aa51
+
+	measure '003. Temp. Max. Card.' = ```
+			
+			/*Values*/
+			VAR _rowMaxTemp = TOPN(1, ClimaPeru, ClimaPeru[temp_max], DESC)
+			VAR _temp_max = MINX(_rowMaxTemp, ClimaPeru[temp_min])
+			VAR _fecha = FORMAT(MAXX(_rowMaxTemp, ClimaPeru[Fecha]), "D-MMM-YYYY")
+			VAR _hora = FORMAT(MAXX(_rowMaxTemp, ClimaPeru[Hora]), "h:mm AM/PM")
+			
+			VAR _ciudad_prov = MAXX(_rowMaxTemp, RELATED(Deptos[NOMBRE_PROV]))
+			VAR _ciudad_dpto = MAXX(_rowMaxTemp, RELATED(Deptos[NOMBRE_REGION]))
+			VAR _ciudad = _ciudad_prov & " - " & _ciudad_dpto
+			
+			VAR _viento = MAXX(_rowMaxTemp, ClimaPeru[Viento])
+			VAR _humedad = MAXX(_rowMaxTemp, ClimaPeru[Humedad])
+			VAR _presion = MAXX(_rowMaxTemp, ClimaPeru[Presion])
+			VAR _descripcion = MAXX(_rowMaxTemp, ClimaPeru[descripcion])
+			
+			
+			/*Icons weather description*/
+			VAR _url = 
+			    SWITCH(
+			        _descripcion,
+			        "clear sky", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-day.svg",
+			        "few clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day.svg",
+			        "scattered clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/cloudy.svg",
+			        "broken clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast-day.svg",
+			        "overcast clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast.svg",
+			        "light rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-rain.svg",
+			        "moderate rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/rain.svg",
+			        "heavy intensity rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-rain.svg",
+			        "snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/snow.svg",
+			        "light snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-snow.svg",
+			        "heavy snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-snow.svg",
+			        "fog", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/fog.svg",
+			        "haze", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/haze.svg"
+			    )
+			
+			/*Descripcion del clima - ES-PE*/
+			VAR _descripcionES =
+			    SWITCH(
+			        TRUE(),
+			        _descripcion = "clear sky", "Cielo despejado",
+			        _descripcion = "few clouds", "Parcialmente nublado",
+			        _descripcion = "scattered clouds", "Nubes dispersas",
+			        _descripcion = "broken clouds", "Mayormente nublado",
+			        _descripcion = "overcast clouds", "Nublado",
+			        _descripcion = "light rain", "Lluvia ligera",
+			        _descripcion = "moderate rain", "Lluvia moderada",
+			        _descripcion = "heavy intensity rain", "Lluvia fuerte",
+			        _descripcion = "snow", "Nieve",
+			        _descripcion = "light snow", "Nieve ligera",
+			        _descripcion = "heavy snow", "Nieve fuerte",
+			        _descripcion = "fog", "Niebla",
+			        _descripcion = "haze", "Neblina",
+			        ""
+			    )
+			
+			
+			
+			
+			/*Color de gradiente de fondo */
+			VAR _color_gradiente_bg_1 = "#99ccf7"       //----------- #C5DFF5 para T Min
+			VAR _color_gradiente_bg_2 = "#7baaf0"       //----------- #F7F9FA para T Min
+			
+			VAR _gradient = _color_gradiente_bg_1 & ", " & _color_gradiente_bg_2  //  No modificar
+			
+			
+			/*Tipografía*/
+			VAR _color_font = "#ffff"                    //----------- #03204b para T Max  
+			VAR _font_family = "'Poppins'"
+			
+			
+			VAR _header = "Temperatura Máxima"
+			
+			/*Color Waves*/
+			VAR _color_waves = "rgba(255,255,255,0.30)" //----------- rgba(114,172,248,0.45)  
+			
+			
+			RETURN
+			
+			"
+			<!DOCTYPE html>
+			<html lang='es'>
+			<head>
+			  <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap' rel='stylesheet'>
+			  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'>
+			
+			  <style>
+			    :root {
+			      --gap-vertical: 12px;
+			      --gap-horizontal: 45px;
+			      --wave-height: 110px;
+			      --wave-speed: 40s;
+			      --wave-opacity: 0.32;
+			      --wave-rotate: 0deg;
+			    }
+			
+			    body {
+			      font-family: "& _font_family &", sans-serif;
+			      background: #ffffff00;
+			      display: flex;
+			      justify-content: center;
+			      align-items: center;
+			      height: 120vh;
+			      margin: 0;
+			    }
+			
+			    .card {
+			      position: relative;
+			      background: linear-gradient(to bottom right, "& _gradient &");
+			      color: " & _color_font & ";
+			      width: 100%;
+			      border-radius: 18px;
+			      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+			      padding: 15px;
+			      overflow: hidden;
+			    }
+			
+			    .wave {
+			      position: absolute;
+			      bottom: -6px;
+			      left: 0;
+			      width: 200%;
+			      height: var(--wave-height);
+			      transform: rotate(var(--wave-rotate));
+			      transform-origin: left bottom;
+			      z-index: 1;
+			      pointer-events: none;
+			      opacity: var(--wave-opacity);
+			      overflow: hidden;
+			    }
+			
+			    .wave__inner {
+			      width: 200%;
+			      height: 100%;
+			      display: flex;
+			      align-items: flex-end;
+			      animation: waveShift var(--wave-speed) linear infinite;
+			    }
+			
+			    .wave__inner svg {
+			      width: 50%;
+			      height: 100%;
+			      display: block;
+			    }
+			
+			    .wave__inner svg:first-child {
+			      margin-right: -1px;
+			    }
+			
+			    @keyframes waveShift {
+			      from { transform: translateX(0); }
+			      to   { transform: translateX(-50%); }
+			    }
+			
+			    .card *:not(.wave):not(.wave *) {
+			      position: relative;
+			      z-index: 2;
+			    }
+			
+			    .card-header {
+			      display: flex;
+			      align-items: center;
+			      font-size: 1.7rem;
+			      font-weight: 500;
+			      margin-bottom: 15px;
+			    }
+			
+			    .card-header i {
+			      margin-right: 8px;
+			      font-size: 1.5rem;
+			      font-weight: 400;
+			    }
+			
+			    .weather {
+			      display: flex;
+			      align-items: center;
+			      justify-content: space-between;
+			      margin-bottom: 10px;
+			    }
+			
+			    .temp {
+			      font-size: 3rem;
+			      font-weight: 500;
+			    }
+			
+			    .icon {
+			      text-align: center;
+			      margin-right: 4rem;
+			    }
+			
+			    .icon img {
+			      width: 18rem;
+			      max-width: 120px
+			    }
+			
+			    .icon div {
+			      font-size: 1rem;
+			      margin-top: 3px;
+			    }
+			
+			    .details {
+			        display: grid;
+			        grid-template-columns: 1fr 1fr;
+			        row-gap: var(--gap-vertical);
+			        column-gap: var(--gap-horizontal);
+			        font-size: 1.3rem;
+			    }
+			
+			    .details div {
+			        display: flex;
+			        align-items: center;
+			        gap: 10px;
+			        min-width: 0;
+			    }
+			
+			    .details i {
+			        font-size: 1.3rem;
+			        flex-shrink: 0;
+			    }
+			
+			
+			    .details div span {
+			        overflow: hidden;
+			        text-overflow: ellipsis; 
+			        white-space: nowrap;
+			        display: inline-block;
+			    }
+			
+			  </style>
+			</head>
+			<body>
+			
+			  <div class='card'>
+			    <div class='wave' aria-hidden='true'>
+			      <div class='wave__inner'>
+			        <svg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'>
+			          <path d='
+			            M0 60
+			            C75 0 225 0 300 60
+			            C375 120 525 120 600 60
+			            C675 0 825 0 900 60
+			            C975 120 1125 120 1200 60
+			            L1200 120 L0 120 Z'
+			            fill='" & _color_waves & "' />
+			        </svg>
+			        <svg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'>
+			          <path d='
+			            M0 60
+			            C75 0 225 0 300 60
+			            C375 120 525 120 600 60
+			            C675 0 825 0 900 60
+			            C975 120 1125 120 1200 60
+			            L1200 120 L0 120 Z'
+			            fill='" & _color_waves & "' />
+			        </svg>
+			      </div>
+			    </div>
+			
+			    <div class='card-header'>
+			        <img src='https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/thermometer-warmer.svg' width='72' style='margin-right:8px;'>
+			        "& _header &"
+			    </div>
+			
+			    <div class='weather'>
+			      <div class='temp'>" & _temp_max & " C°</div>
+			      <div class='icon'>
+			        <img id='weatherIcon' src='" & _url & "' alt='" & _descripcionES & "'>
+			    <div>" & _descripcionES & "</div>
+			      </div>
+			    </div>
+			
+			    <div class='details'>
+			        <div><i class='fa-solid fa-location-dot'></i><span>" & _ciudad & "</span></div>
+			        <div><i class='fa-solid fa-wind'></i><span>" & _viento & " Km/h</span></div>
+			
+			        <div><i class='fa-regular fa-calendar'></i><span>" & _fecha & "</span></div>
+			        <div><i class='fa-solid fa-droplet'></i><span>" & _humedad & " %</span></div>
+			
+			        <div><i class='fa-regular fa-clock'></i><span>" & _hora & "</span></div>
+			        <div><i class='fa-solid fa-gauge-high'></i><span>" & _presion & " hPa</span></div>
+			    </div>
+			
+			  </div>
+			
+			</body>
+			</html>
+			
+			"
+			```
+		lineageTag: c38392f0-0c76-4817-974c-8a4498a2cc8d
+
+	measure Img = "<svg width='215px' height='215px' viewBox='-2.5 -2.5 30.00 30.00' fill='none' xmlns='http://www.w3.org/2000/svg' stroke='#0D6ABF' transform='rotate(0)'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round' stroke='#CCCCCC' stroke-width='0.25'></g><g id='SVGRepo_iconCarrier'> <path fill-rule='evenodd' clip-rule='evenodd' d='M9.918 10.0005H7.082C6.66587 9.99708 6.26541 10.1591 5.96873 10.4509C5.67204 10.7427 5.50343 11.1404 5.5 11.5565V17.4455C5.5077 18.3117 6.21584 19.0078 7.082 19.0005H9.918C10.3341 19.004 10.7346 18.842 11.0313 18.5502C11.328 18.2584 11.4966 17.8607 11.5 17.4445V11.5565C11.4966 11.1404 11.328 10.7427 11.0313 10.4509C10.7346 10.1591 10.3341 9.99708 9.918 10.0005Z' stroke='#0D6ABF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'></path> <path fill-rule='evenodd' clip-rule='evenodd' d='M9.918 4.0006H7.082C6.23326 3.97706 5.52559 4.64492 5.5 5.4936V6.5076C5.52559 7.35629 6.23326 8.02415 7.082 8.0006H9.918C10.7667 8.02415 11.4744 7.35629 11.5 6.5076V5.4936C11.4744 4.64492 10.7667 3.97706 9.918 4.0006Z' stroke='#0D6ABF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'></path> <path fill-rule='evenodd' clip-rule='evenodd' d='M15.082 13.0007H17.917C18.3333 13.0044 18.734 12.8425 19.0309 12.5507C19.3278 12.2588 19.4966 11.861 19.5 11.4447V5.55666C19.4966 5.14054 19.328 4.74282 19.0313 4.45101C18.7346 4.1592 18.3341 3.9972 17.918 4.00066H15.082C14.6659 3.9972 14.2654 4.1592 13.9687 4.45101C13.672 4.74282 13.5034 5.14054 13.5 5.55666V11.4447C13.5034 11.8608 13.672 12.2585 13.9687 12.5503C14.2654 12.8421 14.6659 13.0041 15.082 13.0007Z' stroke='#0D6ABF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'></path> <path fill-rule='evenodd' clip-rule='evenodd' d='M15.082 19.0006H17.917C18.7661 19.0247 19.4744 18.3567 19.5 17.5076V16.4936C19.4744 15.6449 18.7667 14.9771 17.918 15.0006H15.082C14.2333 14.9771 13.5256 15.6449 13.5 16.4936V17.5066C13.525 18.3557 14.2329 19.0241 15.082 19.0006Z' stroke='#0D6ABF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg>"
+		lineageTag: 49137be3-f9c4-4d1a-989a-61114effd102
+
+	measure 'Moda Descripción' = ```
+			
+			VAR _tabla = 
+			    SUMMARIZE(
+			        ClimaPeru,
+			        ClimaPeru[descripcion],
+			        "Conteo", COUNTROWS(ClimaPeru)
+			    )
+			VAR _moda = 
+			    MAXX(
+			        TOPN(
+			            1,
+			            _tabla,
+			            [Conteo],
+			            DESC
+			        ),
+			        ClimaPeru[descripcion]
+			    )
+			
+			RETURN
+			SWITCH(
+			        _moda,
+			        "clear sky", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-day.svg",
+			        "few clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day.svg",
+			        "scattered clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/cloudy.svg",
+			        "broken clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast-day.svg",
+			        "overcast clouds", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast.svg",
+			        "light rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-rain.svg",
+			        "moderate rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/rain.svg",
+			        "heavy intensity rain", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-rain.svg",
+			        "snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/snow.svg",
+			        "light snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day-snow.svg",
+			        "heavy snow", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/extreme-snow.svg",
+			        "fog", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/fog.svg",
+			        "haze", "https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/haze.svg"
+			    )
+			```
+		lineageTag: cb1a316c-c7fd-41f1-a142-bd19a51064fd
+
+
+	measure 'ST_012 Desviacion Estandar Temp' =
+			STDEVX.S(ClimaPeru, ClimaPeru[temperatura])
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000012-0000-0000-0000-000000000012
+		formatString: "0.0000"
+
+	measure 'ST_015 Coef Variacion Temp' =
+			DIVIDE(
+			    STDEVX.S(ClimaPeru, ClimaPeru[temperatura]),
+			    AVERAGE(ClimaPeru[temperatura])
+			) * 100
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000015-0000-0000-0000-000000000015
+		formatString: "0.00\%"
+
+	measure 'ST_016 Percentil 25 Temp' =
+			PERCENTILEX.INC(ClimaPeru, ClimaPeru[temperatura], 0.25)
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000016-0000-0000-0000-000000000016
+		formatString: "0.00"
+
+	measure 'ST_017 Percentil 75 Temp' =
+			PERCENTILEX.INC(ClimaPeru, ClimaPeru[temperatura], 0.75)
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000017-0000-0000-0000-000000000017
+		formatString: "0.00"
+
+	measure 'ST_018 Percentil 90 Temp' =
+			PERCENTILEX.INC(ClimaPeru, ClimaPeru[temperatura], 0.90)
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000018-0000-0000-0000-000000000018
+		formatString: "0.00"
+
+	measure 'ST_019 Suma Sensacion Termica' =
+			SUMX(ClimaPeru, ClimaPeru[sensacion])
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000019-0000-0000-0000-000000000019
+		formatString: "#,0.00"
+
+	measure 'ST_020 Diferencia Temp Real vs Sensacion' =
+			AVERAGEX(ClimaPeru, ClimaPeru[temperatura] - ClimaPeru[sensacion])
+		displayFolder: "STRESS TEST\02 Estadísticas Avanzadas"
+		lineageTag: a1000020-0000-0000-0000-000000000020
+		formatString: "0.00"
+
+	/// [STRESS TEST] Grupo 3 - Contexto de Filtro / CALCULATE
+	measure 'ST_021 Temp Prom Lima' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    Deptos[NOMBRE_REGION] = "Lima"
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000021-0000-0000-0000-000000000021
+		formatString: "0.00"
+
+	measure 'ST_022 Registros Lluvia' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[descripcion] IN {"light rain", "moderate rain", "heavy intensity rain"}
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000022-0000-0000-0000-000000000022
+		formatString: "#,0"
+
+	measure 'ST_023 Registros Cielo Despejado' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[descripcion] = "clear sky"
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000023-0000-0000-0000-000000000023
+		formatString: "#,0"
+
+	measure 'ST_024 Temp Alta Humedad' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    ClimaPeru[humedad] > 80
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000024-0000-0000-0000-000000000024
+		formatString: "0.00"
+
+	measure 'ST_025 Total ALL Registros' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ALL(ClimaPeru)
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000025-0000-0000-0000-000000000025
+		formatString: "#,0"
+
+	measure 'ST_026 Temp Prom Sin Filtro Region' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    ALL(Deptos[NOMBRE_REGION])
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000026-0000-0000-0000-000000000026
+		formatString: "0.00"
+
+	measure 'ST_027 Registros ALLEXCEPT Prov' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ALLEXCEPT(ClimaPeru, ClimaPeru[id_prov])
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000027-0000-0000-0000-000000000027
+		formatString: "#,0"
+
+	measure 'ST_028 Temp Viento Mayor 20' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    ClimaPeru[viento] > 20
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000028-0000-0000-0000-000000000028
+		formatString: "0.00"
+
+	measure 'ST_029 Registros Presion Alta' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[presion] > 1013
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000029-0000-0000-0000-000000000029
+		formatString: "#,0"
+
+	measure 'ST_030 Temp KEEPFILTERS' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    KEEPFILTERS(ClimaPeru[humedad] > 60)
+			)
+		displayFolder: "STRESS TEST\03 Contexto de Filtro"
+		lineageTag: a1000030-0000-0000-0000-000000000030
+		formatString: "0.00"
+
+	/// [STRESS TEST] Grupo 4 - Funciones de Tiempo / Fecha
+	measure 'ST_031 Registros Manana' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[Hour] >= 6 && ClimaPeru[Hour] < 12
+			)
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000031-0000-0000-0000-000000000031
+		formatString: "#,0"
+
+	measure 'ST_032 Registros Tarde' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[Hour] >= 12 && ClimaPeru[Hour] < 18
+			)
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000032-0000-0000-0000-000000000032
+		formatString: "#,0"
+
+	measure 'ST_033 Registros Noche' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[Hour] >= 18 || ClimaPeru[Hour] < 6
+			)
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000033-0000-0000-0000-000000000033
+		formatString: "#,0"
+
+	measure 'ST_034 Fecha Max Registro' =
+			FORMAT(MAX(ClimaPeru[Fecha]), "DD/MM/YYYY")
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000034-0000-0000-0000-000000000034
+
+	measure 'ST_035 Fecha Min Registro' =
+			FORMAT(MIN(ClimaPeru[Fecha]), "DD/MM/YYYY")
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000035-0000-0000-0000-000000000035
+
+	measure 'ST_036 Dias Con Datos' =
+			DISTINCTCOUNT(ClimaPeru[Fecha])
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000036-0000-0000-0000-000000000036
+		formatString: "#,0"
+
+	measure 'ST_037 Hora Promedio Registro' =
+			AVERAGEX(ClimaPeru, ClimaPeru[Hour])
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000037-0000-0000-0000-000000000037
+		formatString: "0.0"
+
+	measure 'ST_038 Registros Lunes' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[Nombre del día] = "Lunes"
+			)
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000038-0000-0000-0000-000000000038
+		formatString: "#,0"
+
+	measure 'ST_039 Temp Promedio Madrugada' =
+			CALCULATE(
+			    AVERAGE(ClimaPeru[temperatura]),
+			    ClimaPeru[Hour] >= 0 && ClimaPeru[Hour] < 6
+			)
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000039-0000-0000-0000-000000000039
+		formatString: "0.00"
+
+	measure 'ST_040 Horas Distintas Con Datos' =
+			DISTINCTCOUNT(ClimaPeru[Hour])
+		displayFolder: "STRESS TEST\04 Tiempo y Fecha"
+		lineageTag: a1000040-0000-0000-0000-000000000040
+		formatString: "0"
+
+	/// [STRESS TEST] Grupo 5 - Ranking y Top N
+	measure 'ST_041 Temp Max Top1 Region' =
+			VAR _top =
+			    TOPN(1, VALUES(Deptos[NOMBRE_REGION]),
+			        CALCULATE(AVERAGE(ClimaPeru[temperatura])), DESC)
+			RETURN
+			    MAXX(_top, Deptos[NOMBRE_REGION])
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000041-0000-0000-0000-000000000041
+
+	measure 'ST_042 Ranking Prov Por Temp' =
+			RANKX(
+			    ALL(Deptos[NOMBRE_PROV]),
+			    CALCULATE(AVERAGE(ClimaPeru[temperatura])),
+			    ,
+			    DESC,
+			    DENSE
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000042-0000-0000-0000-000000000042
+		formatString: "0"
+
+	measure 'ST_043 Ranking Region Por Humedad' =
+			RANKX(
+			    ALL(Deptos[NOMBRE_REGION]),
+			    CALCULATE(AVERAGE(ClimaPeru[humedad])),
+			    ,
+			    DESC,
+			    DENSE
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000043-0000-0000-0000-000000000043
+		formatString: "0"
+
+	measure 'ST_044 Top 5 Registros Calidos' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    TOPN(5, ClimaPeru, ClimaPeru[temperatura], DESC)
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000044-0000-0000-0000-000000000044
+		formatString: "#,0"
+
+	measure 'ST_045 Ranking Viento Por Prov' =
+			RANKX(
+			    ALL(Deptos[NOMBRE_PROV]),
+			    CALCULATE(AVERAGE(ClimaPeru[viento])),
+			    ,
+			    DESC,
+			    SKIP
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000045-0000-0000-0000-000000000045
+		formatString: "0"
+
+	measure 'ST_046 Max Temp Por Region Ranking' =
+			RANKX(
+			    ALL(Deptos[NOMBRE_REGION]),
+			    CALCULATE(MAX(ClimaPeru[temp_max])),
+			    ,
+			    DESC,
+			    DENSE
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000046-0000-0000-0000-000000000046
+		formatString: "0"
+
+	measure 'ST_047 Ranking Presion Por Region' =
+			RANKX(
+			    ALL(Deptos[NOMBRE_REGION]),
+			    CALCULATE(AVERAGE(ClimaPeru[presion])),
+			    ,
+			    ASC,
+			    DENSE
+			)
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000047-0000-0000-0000-000000000047
+		formatString: "0"
+
+	measure 'ST_048 Cantidad Provincias Con Datos' =
+			DISTINCTCOUNT(Deptos[NOMBRE_PROV])
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000048-0000-0000-0000-000000000048
+		formatString: "0"
+
+	measure 'ST_049 Cantidad Regiones Con Datos' =
+			DISTINCTCOUNT(Deptos[NOMBRE_REGION])
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000049-0000-0000-0000-000000000049
+		formatString: "0"
+
+	measure 'ST_050 Temp Max Absoluta TOP1 Prov' =
+			VAR _maxTemp = MAXX(ClimaPeru, ClimaPeru[temp_max])
+			VAR _rowMax = FILTER(ClimaPeru, ClimaPeru[temp_max] = _maxTemp)
+			RETURN
+			    MAXX(_rowMax, RELATED(Deptos[NOMBRE_PROV]))
+		displayFolder: "STRESS TEST\05 Ranking y Top N"
+		lineageTag: a1000050-0000-0000-0000-000000000050
+
+	/// [STRESS TEST] Grupo 6 - Porcentajes y Ratios
+	measure 'ST_051 Pct Registros Lluvia' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[descripcion] IN {"light rain","moderate rain","heavy intensity rain"}),
+			    COUNTROWS(ClimaPeru)
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000051-0000-0000-0000-000000000051
+		formatString: "0.00%"
+
+	measure 'ST_052 Pct Registros Despejado' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[descripcion] = "clear sky"),
+			    CALCULATE(COUNTROWS(ClimaPeru), ALL(ClimaPeru[descripcion]))
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000052-0000-0000-0000-000000000052
+		formatString: "0.00%"
+
+	measure 'ST_053 Pct Temp Sobre Promedio' =
+			VAR _prom = CALCULATE(AVERAGE(ClimaPeru[temperatura]), ALL(ClimaPeru))
+			RETURN
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[temperatura] > _prom),
+			    CALCULATE(COUNTROWS(ClimaPeru), ALL(ClimaPeru))
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000053-0000-0000-0000-000000000053
+		formatString: "0.00%"
+
+	measure 'ST_054 Ratio Temp Max Min' =
+			DIVIDE(MAX(ClimaPeru[temp_max]), MIN(ClimaPeru[temp_min]))
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000054-0000-0000-0000-000000000054
+		formatString: "0.00"
+
+	measure 'ST_055 Pct Humedad Alta' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[humedad] > 80),
+			    COUNTROWS(ClimaPeru)
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000055-0000-0000-0000-000000000055
+		formatString: "0.00%"
+
+	measure 'ST_056 Pct Viento Fuerte' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[viento] > 30),
+			    COUNTROWS(ClimaPeru)
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000056-0000-0000-0000-000000000056
+		formatString: "0.00%"
+
+	measure 'ST_057 Contribucion Prov Al Total' =
+			DIVIDE(
+			    COUNTROWS(ClimaPeru),
+			    CALCULATE(COUNTROWS(ClimaPeru), ALL(Deptos))
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000057-0000-0000-0000-000000000057
+		formatString: "0.00%"
+
+	measure 'ST_058 Ratio Sensacion vs Temp Real' =
+			DIVIDE(
+			    AVERAGE(ClimaPeru[sensacion]),
+			    AVERAGE(ClimaPeru[temperatura])
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000058-0000-0000-0000-000000000058
+		formatString: "0.0000"
+
+	measure 'ST_059 Pct Temp Bajo Cero' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[temp_min] < 0),
+			    CALCULATE(COUNTROWS(ClimaPeru), ALL(ClimaPeru))
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000059-0000-0000-0000-000000000059
+		formatString: "0.00%"
+
+	measure 'ST_060 Pct Registros Con Niebla' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[descripcion] IN {"fog","haze"}),
+			    CALCULATE(COUNTROWS(ClimaPeru), ALL(ClimaPeru[descripcion]))
+			)
+		displayFolder: "STRESS TEST\06 Porcentajes y Ratios"
+		lineageTag: a1000060-0000-0000-0000-000000000060
+		formatString: "0.00%"
+
+	/// [STRESS TEST] Grupo 7 - Medidas Condicionales / IF-SWITCH
+	measure 'ST_061 Clasificacion Temperatura' =
+			VAR _avg = AVERAGE(ClimaPeru[temperatura])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    _avg >= 30, "Muy Calido",
+			    _avg >= 20, "Calido",
+			    _avg >= 10, "Templado",
+			    _avg >= 0,  "Frio",
+			    "Muy Frio"
+			)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000061-0000-0000-0000-000000000061
+
+	measure 'ST_062 Alerta Humedad Critica' =
+			IF(AVERAGE(ClimaPeru[humedad]) > 90, "⚠ CRITICA", "Normal")
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000062-0000-0000-0000-000000000062
+
+	measure 'ST_063 Semaforo Temperatura' =
+			VAR _avg = AVERAGE(ClimaPeru[temperatura])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    _avg > 35, "🔴 EXTREMO",
+			    _avg > 25, "🟡 ALTO",
+			    _avg > 15, "🟢 NORMAL",
+			    "🔵 BAJO"
+			)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000063-0000-0000-0000-000000000063
+
+	measure 'ST_064 Tiene Registros Nieve' =
+			IF(
+			    CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[descripcion] IN {"snow","light snow","heavy snow"}) > 0,
+			    "Sí",
+			    "No"
+			)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000064-0000-0000-0000-000000000064
+
+	measure 'ST_065 Temp Color Rule' =
+			VAR _diff = AVERAGE(ClimaPeru[temperatura]) - CALCULATE(AVERAGE(ClimaPeru[temperatura]), ALL(Deptos))
+			RETURN
+			IF(_diff > 0, 1, IF(_diff < 0, -1, 0))
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000065-0000-0000-0000-000000000065
+		formatString: "0"
+
+	measure 'ST_066 Presion Anormal Flag' =
+			IF(
+			    AVERAGE(ClimaPeru[presion]) < 990 || AVERAGE(ClimaPeru[presion]) > 1030,
+			    "ANORMAL", "Normal"
+			)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000066-0000-0000-0000-000000000066
+
+	measure 'ST_067 Viento Descripcion' =
+			VAR _v = AVERAGE(ClimaPeru[viento])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    _v < 5,  "Calma",
+			    _v < 15, "Brisa Leve",
+			    _v < 30, "Brisa Moderada",
+			    _v < 50, "Viento Fresco",
+			    "Viento Fuerte"
+			)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000067-0000-0000-0000-000000000067
+
+	measure 'ST_068 Indice Confort Termico' =
+			VAR _t = AVERAGE(ClimaPeru[temperatura])
+			VAR _h = AVERAGE(ClimaPeru[humedad])
+			VAR _hi = _t + (0.33 * (_h / 100 * 6.105 * EXP(17.27 * _t / (237.7 + _t)))) - 4
+			RETURN
+			ROUND(_hi, 1)
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000068-0000-0000-0000-000000000068
+		formatString: "0.0"
+
+	measure 'ST_069 Hay Seleccion Region' =
+			IF(ISFILTERED(Deptos[NOMBRE_REGION]), "Filtrado", "Sin Filtro")
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000069-0000-0000-0000-000000000069
+
+	measure 'ST_070 Hay Seleccion Prov' =
+			IF(HASONEVALUE(Deptos[NOMBRE_PROV]), SELECTEDVALUE(Deptos[NOMBRE_PROV]), "Múltiples")
+		displayFolder: "STRESS TEST\07 Medidas Condicionales"
+		lineageTag: a1000070-0000-0000-0000-000000000070
+
+	/// [STRESS TEST] Grupo 8 - Operaciones de Texto / Formato
+	measure 'ST_071 Descripcion Capitalizada' =
+			UPPER(SELECTEDVALUE(ClimaPeru[descripcion], "Sin selección"))
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000071-0000-0000-0000-000000000071
+
+	measure 'ST_072 Resumen Clima Texto' =
+			"Temp: " & FORMAT(AVERAGE(ClimaPeru[temperatura]), "0.0") & "°C | Hum: " & FORMAT(AVERAGE(ClimaPeru[humedad]), "0") & "% | Viento: " & FORMAT(AVERAGE(ClimaPeru[viento]), "0.0") & " km/h"
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000072-0000-0000-0000-000000000072
+
+	measure 'ST_073 Fecha Ultimo Registro Texto' =
+			"Último dato: " & FORMAT(MAX(ClimaPeru[Fecha]), "DD MMM YYYY")
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000073-0000-0000-0000-000000000073
+
+	measure 'ST_074 Cantidad Descripciones Unicas' =
+			DISTINCTCOUNT(ClimaPeru[descripcion])
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000074-0000-0000-0000-000000000074
+		formatString: "0"
+
+	measure 'ST_075 Descripcion Mas Frecuente' =
+			VAR _t = SUMMARIZE(ClimaPeru, ClimaPeru[descripcion], "N", COUNTROWS(ClimaPeru))
+			RETURN
+			MAXX(TOPN(1, _t, [N], DESC), ClimaPeru[descripcion])
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000075-0000-0000-0000-000000000075
+
+	measure 'ST_076 Temp Formateada Con Unidad' =
+			FORMAT(AVERAGE(ClimaPeru[temperatura]), "0.00") & " °C"
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000076-0000-0000-0000-000000000076
+
+	measure 'ST_077 Region Seleccionada' =
+			SELECTEDVALUE(Deptos[NOMBRE_REGION], "Todas las regiones")
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000077-0000-0000-0000-000000000077
+
+	measure 'ST_078 Total Registros Texto' =
+			FORMAT(COUNTROWS(ClimaPeru), "#,0") & " registros"
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000078-0000-0000-0000-000000000078
+
+	measure 'ST_079 Concatenar Region Prov' =
+			SELECTEDVALUE(Deptos[NOMBRE_REGION], "N/A") & " > " & SELECTEDVALUE(Deptos[NOMBRE_PROV], "N/A")
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000079-0000-0000-0000-000000000079
+
+	measure 'ST_080 Descripcion Traducida ES' =
+			VAR _d = SELECTEDVALUE(ClimaPeru[descripcion], "")
+			RETURN
+			SWITCH(
+			    _d,
+			    "clear sky", "Cielo despejado",
+			    "few clouds", "Pocas nubes",
+			    "scattered clouds", "Nubes dispersas",
+			    "broken clouds", "Nublado parcial",
+			    "overcast clouds", "Nublado",
+			    "light rain", "Lluvia ligera",
+			    "moderate rain", "Lluvia moderada",
+			    "heavy intensity rain", "Lluvia intensa",
+			    "fog", "Niebla",
+			    "haze", "Neblina",
+			    "snow", "Nieve",
+			    _d
+			)
+		displayFolder: "STRESS TEST\08 Texto y Formato"
+		lineageTag: a1000080-0000-0000-0000-000000000080
+
+	/// [STRESS TEST] Grupo 9 - Cálculos Iterativos / SUMX / MAXX
+	measure 'ST_081 SUMX Temp x Humedad' =
+			SUMX(ClimaPeru, ClimaPeru[temperatura] * ClimaPeru[humedad])
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000081-0000-0000-0000-000000000081
+		formatString: "#,0.00"
+
+	measure 'ST_082 MAXX Presion Absoluta' =
+			MAXX(ClimaPeru, ClimaPeru[presion])
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000082-0000-0000-0000-000000000082
+		formatString: "0"
+
+	measure 'ST_083 MINX Sensacion Termica' =
+			MINX(ClimaPeru, ClimaPeru[sensacion])
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000083-0000-0000-0000-000000000083
+		formatString: "0.00"
+
+	measure 'ST_084 SUMX Diferencia Temp Max Min' =
+			SUMX(ClimaPeru, ClimaPeru[temp_max] - ClimaPeru[temp_min])
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000084-0000-0000-0000-000000000084
+		formatString: "#,0.00"
+
+	measure 'ST_085 AVERAGEX Indice Viento Presion' =
+			AVERAGEX(
+			    ClimaPeru,
+			    DIVIDE(ClimaPeru[viento], ClimaPeru[presion]) * 1000
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000085-0000-0000-0000-000000000085
+		formatString: "0.0000"
+
+	measure 'ST_086 SUMX Por Region' =
+			SUMX(
+			    VALUES(Deptos[NOMBRE_REGION]),
+			    CALCULATE(AVERAGE(ClimaPeru[temperatura]))
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000086-0000-0000-0000-000000000086
+		formatString: "0.00"
+
+	measure 'ST_087 MAXX Prom Temp Por Prov' =
+			MAXX(
+			    VALUES(Deptos[NOMBRE_PROV]),
+			    CALCULATE(AVERAGE(ClimaPeru[temperatura]))
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000087-0000-0000-0000-000000000087
+		formatString: "0.00"
+
+	measure 'ST_088 MINX Prom Temp Por Region' =
+			MINX(
+			    VALUES(Deptos[NOMBRE_REGION]),
+			    CALCULATE(AVERAGE(ClimaPeru[temperatura]))
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000088-0000-0000-0000-000000000088
+		formatString: "0.00"
+
+	measure 'ST_089 COUNTX Registros Calidos' =
+			COUNTX(
+			    FILTER(ClimaPeru, ClimaPeru[temperatura] > 25),
+			    ClimaPeru[id]
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000089-0000-0000-0000-000000000089
+		formatString: "#,0"
+
+	measure 'ST_090 SUMX Viento Ponderado x Horas' =
+			SUMX(
+			    ClimaPeru,
+			    ClimaPeru[viento] * (1 + ClimaPeru[Hour] / 24)
+			)
+		displayFolder: "STRESS TEST\09 Cálculos Iterativos"
+		lineageTag: a1000090-0000-0000-0000-000000000090
+		formatString: "#,0.00"
+
+	/// [STRESS TEST] Grupo 10 - Medidas de Auditoría (Validación de Datos)
+	measure 'ST_091 Registros Temperatura Nula' =
+			COUNTROWS(FILTER(ClimaPeru, ISBLANK(ClimaPeru[temperatura])))
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000091-0000-0000-0000-000000000091
+		formatString: "#,0"
+
+	measure 'ST_092 Registros Duplicados Por Fecha Prov' =
+			SUMX(
+			    SUMMARIZE(ClimaPeru, ClimaPeru[Fecha], ClimaPeru[id_prov], ClimaPeru[Hour], "N", COUNTROWS(ClimaPeru)),
+			    IF([N] > 1, [N] - 1, 0)
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000092-0000-0000-0000-000000000092
+		formatString: "#,0"
+
+	measure 'ST_093 Provincias Sin Datos Clima' =
+			CALCULATE(
+			    COUNTROWS(Deptos),
+			    EXCEPT(VALUES(Deptos[ID_PROV]), VALUES(ClimaPeru[id_prov]))
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000093-0000-0000-0000-000000000093
+		formatString: "#,0"
+
+	measure 'ST_094 Integridad Referencial' =
+			VAR _total_clima = CALCULATE(DISTINCTCOUNT(ClimaPeru[id_prov]), ALL(ClimaPeru))
+			VAR _total_deptos = CALCULATE(COUNTROWS(Deptos), ALL(Deptos))
+			RETURN
+			DIVIDE(_total_clima, _total_deptos)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000094-0000-0000-0000-000000000094
+		formatString: "0.00%"
+
+	measure 'ST_095 Registros Temp Fuera Rango' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[temperatura] < -20 || ClimaPeru[temperatura] > 50
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000095-0000-0000-0000-000000000095
+		formatString: "#,0"
+
+	measure 'ST_096 Registros Humedad Invalida' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[humedad] < 0 || ClimaPeru[humedad] > 100
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000096-0000-0000-0000-000000000096
+		formatString: "#,0"
+
+	measure 'ST_097 Registros Viento Negativo' =
+			CALCULATE(
+			    COUNTROWS(ClimaPeru),
+			    ClimaPeru[viento] < 0
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000097-0000-0000-0000-000000000097
+		formatString: "#,0"
+
+	measure 'ST_098 Completitud Datos Pct' =
+			DIVIDE(
+			    CALCULATE(COUNTROWS(ClimaPeru), NOT ISBLANK(ClimaPeru[temperatura])),
+			    COUNTROWS(ClimaPeru)
+			)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000098-0000-0000-0000-000000000098
+		formatString: "0.00%"
+
+	measure 'ST_099 Score Calidad General' =
+			VAR _completitud = DIVIDE(CALCULATE(COUNTROWS(ClimaPeru), NOT ISBLANK(ClimaPeru[temperatura])), COUNTROWS(ClimaPeru))
+			VAR _sin_invalidos = DIVIDE(CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[humedad] >= 0 && ClimaPeru[humedad] <= 100), COUNTROWS(ClimaPeru))
+			VAR _sin_negativos = DIVIDE(CALCULATE(COUNTROWS(ClimaPeru), ClimaPeru[viento] >= 0), COUNTROWS(ClimaPeru))
+			RETURN
+			ROUND((_completitud + _sin_invalidos + _sin_negativos) / 3 * 100, 2)
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000099-0000-0000-0000-000000000099
+		formatString: "0.00"
+
+	measure 'ST_100 Resumen Ejecutivo Auditoria' =
+			VAR _reg = COUNTROWS(ClimaPeru)
+			VAR _prov = DISTINCTCOUNT(ClimaPeru[id_prov])
+			VAR _dias = DISTINCTCOUNT(ClimaPeru[Fecha])
+			VAR _avg_t = FORMAT(AVERAGE(ClimaPeru[temperatura]), "0.0")
+			VAR _max_t = FORMAT(MAX(ClimaPeru[temp_max]), "0.0")
+			VAR _min_t = FORMAT(MIN(ClimaPeru[temp_min]), "0.0")
+			RETURN
+			"📊 Registros: " & FORMAT(_reg, "#,0") &
+			" | 🗺 Provincias: " & _prov &
+			" | 📅 Días: " & _dias &
+			" | 🌡 T.Prom: " & _avg_t & "°C" &
+			" | ↑ " & _max_t & "°C" &
+			" | ↓ " & _min_t & "°C"
+		displayFolder: "STRESS TEST\10 Auditoría y Validación"
+		lineageTag: a1000100-0000-0000-0000-000000000100
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+

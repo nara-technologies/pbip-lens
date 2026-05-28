@@ -1,0 +1,154 @@
+{
+  "name": "pbip-lens",
+  "displayName": "PBIP Lens",
+  "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.",
+  "version": "0.3.1",
+  "publisher": "Nara-Technologies",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nara-technologies/pbip-lens"
+  },
+  "icon": "images/logo.png",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "dax",
+        "aliases": [
+          "DAX",
+          "dax"
+        ],
+        "extensions": [
+          ".dax",
+          ".tmdl"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dax",
+        "scopeName": "source.dax",
+        "path": "./syntaxes/dax.tmLanguage.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pbip-lens-container",
+          "title": "PBIP Lens",
+          "icon": "images/logo.svg"
+        }
+      ]
+    },
+    "views": {
+      "pbip-lens-container": [
+        {
+          "id": "pbip-lens-welcome",
+          "name": "Inicio",
+          "type": "tree",
+          "icon": "images/logo.svg",
+          "when": "!pbip-lens.isAudited"
+        },
+        {
+          "id": "pbip-lens-semantic-tree",
+          "name": "Modelo Semántico",
+          "type": "tree",
+          "icon": "images/logo.svg",
+          "when": "pbip-lens.isAudited"
+        },
+        {
+          "id": "pbip-lens-audit-tree",
+          "name": "Auditoría de Medidas",
+          "type": "tree",
+          "icon": "images/logo.svg",
+          "when": "pbip-lens.isAudited"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "pbip-lens-welcome",
+        "contents": "Bienvenido a PBIP Lens.\n\n[Analizar Proyecto](command:pbip-lens.analyzeWorkspace)",
+        "when": "!pbip-lens.isAudited"
+      }
+    ],
+    "commands": [
+      {
+        "command": "pbip-lens.analyzeWorkspace",
+        "title": "PBIP Lens: Analizar Proyecto"
+      },
+      {
+        "command": "pbip-lens.refreshAnalysis",
+        "title": "PBIP Lens: Refrescar Análisis",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "pbip-lens.showLogs",
+        "title": "PBIP Lens: Mostrar Logs",
+        "icon": "$(output)"
+      },
+      {
+        "command": "pbip-lens.showUI",
+        "title": "PBIP Lens: Mostrar UI"
+      },
+      {
+        "command": "pbip-lens.openNodeDetails",
+        "title": "PBIP Lens: Abrir Detalles del Nodo"
+      },
+      {
+        "command": "pbip-lens.purgeNode",
+        "title": "PBIP Lens: Purgar Medida"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "pbip-lens.refreshAnalysis",
+          "when": "view == pbip-lens-semantic-tree || view == pbip-lens-audit-tree",
+          "group": "navigation@1"
+        },
+        {
+          "command": "pbip-lens.showLogs",
+          "when": "view == pbip-lens-semantic-tree || view == pbip-lens-audit-tree",
+          "group": "navigation@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "webpack --watch --mode development",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.110.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "jest": "^30.4.2",
+    "prettier": "^3.8.3",
+    "ts-jest": "^29.4.11",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1"
+  }
+}

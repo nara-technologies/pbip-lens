@@ -1,0 +1,48 @@
+table 'Ver por'
+	lineageTag: e8578edc-d673-48b6-b3ef-d35ed794d00c
+
+	column 'Ver por'
+		lineageTag: 37a016c0-281b-4856-9b32-0383a08942cd
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Ver por Orden'
+
+		relatedColumnDetails
+			groupByColumn: 'Ver por Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ver por Campos'
+		isHidden
+		lineageTag: f52b6415-ae03-463c-9ed9-fb543bb4667f
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Ver por Orden'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ver por Orden'
+		isHidden
+		formatString: 0
+		lineageTag: cb374658-7e6e-4728-be32-603f6dd8da1d
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Ver por' = calculated
+		mode: import
+		source =
+				{
+				    ("H", NAMEOF('ClimaPeru'[Hour]), 0),
+				    ("D", NAMEOF('ClimaPeru'[Fecha]), 1)
+				}
+
+	annotation PBI_Id = d03b0a4f106c4482b1de83fa7bf02f17
+

@@ -1,0 +1,53 @@
+table Deptos
+	lineageTag: acb9272b-826a-44cf-a4a3-81e375370ea9
+
+	column ID_PROV
+		dataType: string
+		lineageTag: 26c44ca6-4a06-4c56-a43d-90741ffe2799
+		summarizeBy: none
+		sourceColumn: ID_PROV
+
+		annotation SummarizationSetBy = Automatic
+
+	column NOMBRE_PROV
+		dataType: string
+		lineageTag: cf5fc0d1-f8a5-4b6d-857c-00558f47c96b
+		summarizeBy: none
+		sourceColumn: NOMBRE_PROV
+
+		annotation SummarizationSetBy = Automatic
+
+	column NOMBRE_REGION
+		dataType: string
+		lineageTag: f50c5cfb-33c1-45da-9fd2-d50140391da2
+		summarizeBy: none
+		sourceColumn: NOMBRE_REGION
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Deptos = m
+		mode: import
+		source =
+				let
+				    Origen = Json.Document(File.Contents("D:\Manuel Vasquez\GitHub\001. PROJECTS\002. POWER BI\001. DASHBOARD DEL CLIMA - INTEGRACION CON N8N Y SQL\src\peru_provincial_simple.json")),
+				    #"Convertida en tabla" = Table.FromRecords({Origen}),
+				    #"Se expandió crs" = Table.ExpandRecordColumn(#"Convertida en tabla", "crs", {"type", "properties"}, {"crs.type", "crs.properties"}),
+				    #"Se expandió crs.properties" = Table.ExpandRecordColumn(#"Se expandió crs", "crs.properties", {"name"}, {"crs.properties.name"}),
+				    #"Se expandió features" = Table.ExpandListColumn(#"Se expandió crs.properties", "features"),
+				    #"Se expandió features1" = Table.ExpandRecordColumn(#"Se expandió features", "features", {"type", "properties", "geometry"}, {"features.type", "features.properties", "features.geometry"}),
+				    #"Se expandió features.properties" = Table.ExpandRecordColumn(#"Se expandió features1", "features.properties", {"COUNT", "FIRST_IDPR", "NOMBPROV", "FIRST_NOMB", "LAST_DCTO", "LAST_LEY", "FIRST_FECH", "LAST_FECHA", "MIN_SHAPE_", "ha"}, {"features.properties.COUNT", "features.properties.FIRST_IDPR", "features.properties.NOMBPROV", "features.properties.FIRST_NOMB", "features.properties.LAST_DCTO", "features.properties.LAST_LEY", "features.properties.FIRST_FECH", "features.properties.LAST_FECHA", "features.properties.MIN_SHAPE_", "features.properties.ha"}),
+				    #"Se expandió features.geometry" = Table.ExpandRecordColumn(#"Se expandió features.properties", "features.geometry", {"type", "coordinates"}, {"features.geometry.type", "features.geometry.coordinates"}),
+				    #"Se expandió features.geometry.coordinates" = Table.ExpandListColumn(#"Se expandió features.geometry", "features.geometry.coordinates"),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Se expandió features.geometry.coordinates",{{"type", type text}, {"crs.type", type text}, {"crs.properties.name", type text}, {"features.type", type text}, {"features.properties.COUNT", Int64.Type}, {"features.properties.FIRST_IDPR", type text}, {"features.properties.NOMBPROV", type text}, {"features.properties.FIRST_NOMB", type text}, {"features.properties.LAST_DCTO", type text}, {"features.properties.LAST_LEY", type text}, {"features.properties.FIRST_FECH", type text}, {"features.properties.LAST_FECHA", type text}, {"features.properties.MIN_SHAPE_", type number}, {"features.properties.ha", type number}, {"features.geometry.type", type text}, {"features.geometry.coordinates", type any}}),
+				    #"Otras columnas quitadas" = Table.SelectColumns(#"Tipo cambiado",{"features.properties.FIRST_IDPR", "features.properties.NOMBPROV", "features.properties.FIRST_NOMB"}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Otras columnas quitadas",{{"features.properties.FIRST_IDPR", "ID_PROV"}, {"features.properties.NOMBPROV", "NOMBRE_PROV"}, {"features.properties.FIRST_NOMB", "NOMBRE_REGION"}}),
+				    #"Duplicados quitados" = Table.Distinct(#"Columnas con nombre cambiado", {"ID_PROV"}),
+				    #"Valor reemplazado" = Table.ReplaceValue(#"Duplicados quitados","FAFARDO","FAJARDO",Replacer.ReplaceText,{"NOMBRE_PROV"}),
+				    #"Poner En Mayúsculas Cada Palabra" = Table.TransformColumns(#"Valor reemplazado",{{"NOMBRE_PROV", Text.Proper, type text}, {"NOMBRE_REGION", Text.Proper, type text}})
+				in
+				    #"Poner En Mayúsculas Cada Palabra"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,172 @@
+table ClimaPeru
+	lineageTag: c86c1812-defd-415c-b249-af2c91808159
+
+	column id
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6c37d998-7bb8-4f6c-8efd-fdf93fdf59f0
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column temperatura
+		dataType: double
+		sourceProviderType: decimal(5, 2)
+		lineageTag: d7d4bf1a-eb2c-4f4e-904f-58fed88bf08d
+		summarizeBy: sum
+		sourceColumn: temperatura
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column temp_min
+		dataType: double
+		sourceProviderType: decimal(5, 2)
+		lineageTag: 8cc717e8-668d-4196-9f68-b52b7fc8ecc8
+		summarizeBy: sum
+		sourceColumn: temp_min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column temp_max
+		dataType: double
+		sourceProviderType: decimal(5, 2)
+		lineageTag: f958492e-b2b8-4f93-950d-d7232e36a14c
+		summarizeBy: sum
+		sourceColumn: temp_max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sensacion
+		dataType: double
+		sourceProviderType: decimal(5, 2)
+		lineageTag: d1eda186-3e7d-4a49-9c16-bd7cd99f61cf
+		summarizeBy: sum
+		sourceColumn: sensacion
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column humedad
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 033b8fb7-e473-44e1-933b-8a434ff1b2d2
+		summarizeBy: sum
+		sourceColumn: humedad
+
+		annotation SummarizationSetBy = Automatic
+
+	column presion
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 81b94fd3-eb5e-495a-a149-85d9d50d5563
+		summarizeBy: sum
+		sourceColumn: presion
+
+		annotation SummarizationSetBy = Automatic
+
+	column viento
+		dataType: double
+		sourceProviderType: decimal(5, 2)
+		lineageTag: 255480de-78f3-4182-8ee4-8a3e16edc97c
+		summarizeBy: sum
+		sourceColumn: viento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dir_vient
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 049379e3-1904-4f0f-97ea-c987e1dd8a24
+		summarizeBy: sum
+		sourceColumn: dir_vient
+
+		annotation SummarizationSetBy = Automatic
+
+	column descripcion
+		dataType: string
+		sourceProviderType: nvarchar(100)
+		lineageTag: 0664dfe1-5c1c-48ea-831e-a88893fe3d13
+		summarizeBy: none
+		sourceColumn: descripcion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 925ad88a-af39-4bb5-ae5f-82028bb6e37f
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Hora
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: c65d4cae-af1a-4e9f-8e8e-5330ec0befb1
+		summarizeBy: none
+		sourceColumn: Hora
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column Hour = HOUR([Hora])
+		formatString: 0
+		lineageTag: 52271590-d07a-473b-b19c-c74c12729932
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre del día'
+		dataType: string
+		lineageTag: c505e0a1-2295-427e-bf00-750c77d1a0b0
+		summarizeBy: none
+		sourceColumn: Nombre del día
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_prov
+		dataType: string
+		lineageTag: d2e40599-4dfd-404d-916a-21122fda6520
+		summarizeBy: none
+		sourceColumn: id_prov
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ClimaPeru = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("NPK-2222A", "Clima", [Query="SELECT * FROM dbo.ClimaPeru"]),
+				    #"Filas filtradas" = Table.SelectRows(Origen, each [id] > 791),
+				    #"Fecha insertada" = Table.AddColumn(#"Filas filtradas", "Fecha.1", each DateTime.Date([fecha]), type date),
+				    #"Hora insertada" = Table.AddColumn(#"Fecha insertada", "Hora", each DateTime.Time([fecha]), type time),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Hora insertada",{"fecha"}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Columnas quitadas",{{"Fecha.1", "Fecha"}}),
+				    #"Nombre del día insertado" = Table.AddColumn(#"Columnas con nombre cambiado", "Nombre del día", each Date.DayOfWeekName([Fecha]), type text),
+				    #"Poner En Mayúsculas Cada Palabra" = Table.TransformColumns(#"Nombre del día insertado",{{"Nombre del día", Text.Proper, type text}})
+				in
+				    #"Poner En Mayúsculas Cada Palabra"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

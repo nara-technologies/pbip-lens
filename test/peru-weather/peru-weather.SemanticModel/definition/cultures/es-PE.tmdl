@@ -1,0 +1,1420 @@
+cultureInfo es-PE
+
+	linguisticMetadata =
+			{
+			  "Version": "4.1.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "clima_peru": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "clima peru": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "ClimaPeru": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.id": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "id"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "id": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "identification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "identity": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "credential": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        }
+			      ],
+			      "NameType": "Identifier"
+			    },
+			    "clima_peru.temperatura": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "temperatura"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "temperatura": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.temp_min": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "temp_min"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "temp min": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "temp_min": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "temp minimum": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.temp_max": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "temp_max"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "temp max": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "temp_max": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "temp maximum": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.sensacion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "sensacion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "sensacion": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.humedad": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "humedad"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "humedad": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.presion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "presion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "presion": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.viento": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "viento"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "viento": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.dir_vient": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "dir_vient"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "dir vient": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dir_vient": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.descripcion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "descripcion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "descripcion": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "clima_peru.fecha": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "Fecha"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "fecha": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "date": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        }
+			      ],
+			      "SemanticType": "Time"
+			    },
+			    "clima_peru.hora": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ClimaPeru",
+			          "ConceptualProperty": "Hora"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "hora": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "time": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        }
+			      ],
+			      "SemanticType": "Time"
+			    },
+			    "depto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Deptos"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "depto": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "depto.id_prov": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Deptos",
+			          "ConceptualProperty": "ID_PROV"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "id prov": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "ID_PROV": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "identification prov": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.6
+			          }
+			        },
+			        {
+			          "identity prov": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.6
+			          }
+			        },
+			        {
+			          "identifier prov": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.6
+			          }
+			        },
+			        {
+			          "credential prov": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        }
+			      ]
+			    },
+			    "depto.nombre_prov": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Deptos",
+			          "ConceptualProperty": "NOMBRE_PROV"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "nombre prov": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "NOMBRE_PROV": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "Provincia": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "depto.nombre_region": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Deptos",
+			          "ConceptualProperty": "NOMBRE_REGION"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "nombre region": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "NOMBRE_REGION": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "nombre location": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.833
+			          }
+			        },
+			        {
+			          "nombre province": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "nombre area": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "nombre district": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "nombre section": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "nombre zone": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "nombre continent": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        }
+			      ]
+			    },
+			    "entity__measure": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "_measure": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "_ degree": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "_ quantity": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "_ quota": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "_ extent": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "_ amount": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "_ portion": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "_ ration": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "_ size": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        }
+			      ]
+			    },
+			    "entity__measure.medida": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "002. Temp. Min. Card."
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "medida": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__measure.entity_001__avg_temp": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "001. Avg Temp"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "001. avg temp": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "001. average temp": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "001. avg fill-in": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.499
+			          }
+			        },
+			        {
+			          "001. avg stand-in": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.499
+			          }
+			        },
+			        {
+			          "Temp. Prom.": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  },
+			  "Relationships": {
+			    "clima_peru_has_entity__measure_entity_001__avg_temp": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "entity__measure.entity_001__avg_temp": {
+			          "Target": {
+			            "Entity": "entity__measure.entity_001__avg_temp"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "entity__measure.entity_001__avg_temp"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_001__avg_temp"
+			        }
+			      ]
+			    },
+			    "entity__measure_has_medida": {
+			      "Binding": {
+			        "ConceptualEntity": "_Measures"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__measure": {
+			          "Target": {
+			            "Entity": "entity__measure"
+			          }
+			        },
+			        "entity__measure.medida": {
+			          "Target": {
+			            "Entity": "entity__measure.medida"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__measure"
+			            },
+			            "Object": {
+			              "Role": "entity__measure.medida"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_measures_have_medida"
+			        }
+			      ]
+			    },
+			    "depto_has_nombre_region": {
+			      "Binding": {
+			        "ConceptualEntity": "Deptos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "depto": {
+			          "Target": {
+			            "Entity": "depto"
+			          }
+			        },
+			        "depto.nombre_region": {
+			          "Target": {
+			            "Entity": "depto.nombre_region"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "depto"
+			            },
+			            "Object": {
+			              "Role": "depto.nombre_region"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "deptos_have_nombre_regions"
+			        }
+			      ]
+			    },
+			    "depto_has_nombre_prov": {
+			      "Binding": {
+			        "ConceptualEntity": "Deptos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "depto": {
+			          "Target": {
+			            "Entity": "depto"
+			          }
+			        },
+			        "depto.nombre_prov": {
+			          "Target": {
+			            "Entity": "depto.nombre_prov"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "depto"
+			            },
+			            "Object": {
+			              "Role": "depto.nombre_prov"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "deptos_have_nombre_provs"
+			        }
+			      ]
+			    },
+			    "depto_has_id_prov": {
+			      "Binding": {
+			        "ConceptualEntity": "Deptos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "depto": {
+			          "Target": {
+			            "Entity": "depto"
+			          }
+			        },
+			        "depto.id_prov": {
+			          "Target": {
+			            "Entity": "depto.id_prov"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "depto"
+			            },
+			            "Object": {
+			              "Role": "depto.id_prov"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "deptos_have_id_provs"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_hora": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.hora": {
+			          "Target": {
+			            "Entity": "clima_peru.hora"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.hora"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_horas"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_fecha": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.fecha": {
+			          "Target": {
+			            "Entity": "clima_peru.fecha"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.fecha"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_fechas"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_descripcion": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.descripcion": {
+			          "Target": {
+			            "Entity": "clima_peru.descripcion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.descripcion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_descripcions"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_dir_vient": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.dir_vient": {
+			          "Target": {
+			            "Entity": "clima_peru.dir_vient"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.dir_vient"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_dir_vients"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_viento": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.viento": {
+			          "Target": {
+			            "Entity": "clima_peru.viento"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.viento"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_vientos"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_presion": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.presion": {
+			          "Target": {
+			            "Entity": "clima_peru.presion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.presion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_presions"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_humedad": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.humedad": {
+			          "Target": {
+			            "Entity": "clima_peru.humedad"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.humedad"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_humedads"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_sensacion": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.sensacion": {
+			          "Target": {
+			            "Entity": "clima_peru.sensacion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.sensacion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_sensacions"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_temp_max": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.temp_max": {
+			          "Target": {
+			            "Entity": "clima_peru.temp_max"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.temp_max"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_temp_maxes"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_temp_min": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.temp_min": {
+			          "Target": {
+			            "Entity": "clima_peru.temp_min"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.temp_min"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_temp_mins"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_temperatura": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.temperatura": {
+			          "Target": {
+			            "Entity": "clima_peru.temperatura"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.temperatura"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_temperaturas"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_latitud": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.latitud": {
+			          "Target": {
+			            "Entity": "clima_peru.latitud"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.latitud"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_latituds"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_longitud": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.longitud": {
+			          "Target": {
+			            "Entity": "clima_peru.longitud"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.longitud"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_longituds"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_id": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "clima_peru.id": {
+			          "Target": {
+			            "Entity": "clima_peru.id"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "clima_peru.id"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_ids"
+			        },
+			        {
+			          "Name": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Name": {
+			              "Role": "clima_peru.id"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "ids_are_names_IDs_of_clima_peru"
+			        }
+			      ]
+			    },
+			    "depto_in_nombre_region": {
+			      "Binding": {
+			        "ConceptualEntity": "Deptos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "depto": {
+			          "Target": {
+			            "Entity": "depto"
+			          }
+			        },
+			        "depto.nombre_region": {
+			          "Target": {
+			            "Entity": "depto.nombre_region"
+			          }
+			        }
+			      },
+			      "SemanticSlots": {
+			        "Where": {
+			          "Role": "depto.nombre_region"
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Preposition": {
+			            "Subject": {
+			              "Role": "depto"
+			            },
+			            "Prepositions": [
+			              {
+			                "in": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ],
+			            "Object": {
+			              "Role": "depto.nombre_region"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "deptos_are_in_nombre_regions"
+			        }
+			      ]
+			    },
+			    "clima_peru_has_depto": {
+			      "Binding": {
+			        "ConceptualEntity": "ClimaPeru"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "clima_peru": {
+			          "Target": {
+			            "Entity": "clima_peru"
+			          }
+			        },
+			        "depto": {
+			          "Target": {
+			            "Entity": "depto"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "clima_peru"
+			            },
+			            "Object": {
+			              "Role": "depto"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "clima_peru_have_deptos"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "depto"
+			            },
+			            "Object": {
+			              "Role": "clima_peru"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "deptos_have_clima_peru"
+			        }
+			      ]
+			    }
+			  },
+			  "Agents": {
+			    "Internal": {
+			      "Version": "1.1.0"
+			    }
+			  }
+			}
+		contentType: json
+

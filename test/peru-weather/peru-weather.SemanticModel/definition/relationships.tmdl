@@ -1,0 +1,4 @@
+relationship AutoDetected_cafd5b5f-fcc6-4969-8338-1ae427f2eabe
+	fromColumn: ClimaPeru.id_prov
+	toColumn: Deptos.ID_PROV
+

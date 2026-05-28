@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "peru-weather"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a85a2f89-9f10-4548-bfe4-87969bbf55fe"
+  }
+}
