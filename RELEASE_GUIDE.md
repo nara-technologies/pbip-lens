@@ -16,7 +16,7 @@ Follow these steps in order when releasing a new version:
 
 ### 2. Determine & Apply Version Bump
 - [ ] **Determine the Bump Level**:
-  - **Patch** (e.g., `0.4.2 -> 0.4.3`): Internal fixes, package configurations (like `.npmignore` adjustments), or documentation-only updates.
+  - **Patch** (e.g., `0.4.3 -> 0.4.4`): Internal fixes, package configurations (like `.npmignore` adjustments), or documentation-only updates.
   - **Minor** (e.g., `0.4.0 -> 0.5.0`): New backward-compatible features (new rules, CLI parameters).
   - **Major** (e.g., `0.4.0 -> 1.0.0`): Breaking changes in the API, CLI commands, or core logic.
 - [ ] **Update package.json**: Bump the `"version"` field in [package.json](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/package.json).
@@ -53,20 +53,26 @@ Once the build passes and the packaging is verified, proceed to commit and tag t
   git tag -a vX.Y.Z -m "Release vX.Y.Z"
   ```
 
-### 6. Remote Sync & Publication
+### 6. Remote Sync & Automated Publication
 - [ ] **Push Commits and Tags**:
   ```powershell
+  # Push your current branch to remote
   git push origin <current-branch>
+  # Push the new release tag to remote (this triggers the GitHub Actions release workflow)
   git push origin vX.Y.Z
   ```
-- [ ] **Publish VS Code Extension**: Publish to the Visual Studio Code Marketplace using:
-  ```powershell
-  npx @vscode/vsce publish
-  ```
-- [ ] **Publish NPM CLI Package**: Publish the CLI package to NPMJS using:
-  ```powershell
-  npm publish
-  ```
+- [ ] **Monitor GitHub Actions Pipeline**:
+  - Pushing the tag `v*` triggers the automated CI/CD pipeline defined in [.github/workflows/release.yml](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/.github/workflows/release.yml).
+  - Open the **Actions** tab on your GitHub repository.
+  - Verify that the `Build and Publish Release` job compiles cleanly and publishes successfully to both NPM and the VS Code Marketplace.
+- [ ] **Manual Fallback (If Pipeline Fails)**:
+  - If you need to publish manually, run:
+    ```powershell
+    # Publish to VS Code Marketplace
+    npx vsce publish -p $VSCE_PAT
+    # Publish to NPMJS
+    npm publish
+    ```
 
 ---
 

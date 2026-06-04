@@ -27,7 +27,7 @@ Options:
     }
 
     if (args.includes('--version') || args.includes('-v')) {
-        console.log('PBIP Lens v0.4.3');
+        console.log('PBIP Lens v0.4.4');
         process.exit(0);
     }
 

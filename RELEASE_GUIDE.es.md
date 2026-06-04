@@ -14,7 +14,7 @@ Sigue estos pasos en orden al lanzar una nueva versión:
 
 ### 2. Determinar y Aplicar el Incremento de Versión
 - [ ] **Determinar el Nivel de Cambio**:
-  - **Patch** (ej., `0.4.2 -> 0.4.3`): Correcciones internas, ajustes de configuración del paquete (como modificaciones en `.npmignore`) o actualizaciones exclusivas de documentación.
+  - **Patch** (ej., `0.4.3 -> 0.4.4`): Correcciones internas, ajustes de configuración del paquete (como modificaciones en `.npmignore`) o actualizaciones exclusivas de documentación.
   - **Minor** (ej., `0.4.0 -> 0.5.0`): Nuevas funcionalidades compatibles con versiones anteriores (nuevas reglas, parámetros CLI).
   - **Major** (ej., `0.4.0 -> 1.0.0`): Cambios disruptivos en la API, comandos CLI o lógica del núcleo.
 - [ ] **Actualizar package.json**: Incrementa el campo `"version"` en [package.json](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/package.json).
@@ -51,20 +51,26 @@ Una vez completadas y validadas las compilaciones y el empaquetado, procede a co
   git tag -a vX.Y.Z -m "Release vX.Y.Z"
   ```
 
-### 6. Sincronización Remota y Publicación
+### 6. Sincronización Remota y Publicación Automatizada
 - [ ] **Subir Commits y Etiquetas (Push)**:
   ```powershell
+  # Sube tu rama de desarrollo actual
   git push origin <rama-actual>
+  # Sube la etiqueta de versión (esto activa el workflow de publicación automática)
   git push origin vX.Y.Z
   ```
-- [ ] **Publicar Extensión VS Code**: Sube la extensión al Visual Studio Code Marketplace usando:
-  ```powershell
-  npx @vscode/vsce publish
-  ```
-- [ ] **Publicar Paquete CLI NPM**: Publica el CLI en NPMJS usando:
-  ```powershell
-  npm publish
-  ```
+- [ ] **Monitorear el Pipeline de GitHub Actions**:
+  - Al subir la etiqueta `v*`, se activará el workflow automatizado definido en [.github/workflows/release.yml](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/.github/workflows/release.yml).
+  - Entra a la pestaña **Actions** en tu repositorio de GitHub.
+  - Verifica que el trabajo `Build and Publish Release` compile limpiamente y publique con éxito tanto en NPMJS como en el VS Code Marketplace.
+- [ ] **Alternativa Manual (Si el Pipeline Falla)**:
+  - En caso de requerir publicación manual, ejecuta:
+    ```powershell
+    # Publicar en VS Code Marketplace
+    npx vsce publish -p $VSCE_PAT
+    # Publicar en NPMJS
+    npm publish
+    ```
 
 ---
 
