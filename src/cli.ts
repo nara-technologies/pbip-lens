@@ -9,11 +9,35 @@ import { OrphanNodeRule } from './core/rules/OrphanNodeRule';
 import { MissingDescriptionRule } from './core/rules/MissingDescriptionRule';
 
 async function main() {
+    const args = process.argv.slice(2);
+
+    // Interceptor de banderas de ayuda y versión
+    if (args.includes('--help') || args.includes('-h')) {
+        console.log(`
+PBIP Lens CLI - Advanced Semantic Model Governance
+
+Usage:
+  pbip-lens <path-to-project>
+
+Options:
+  -h, --help      Show this help message
+  -v, --version   Show version number
+  `);
+        process.exit(0);
+    }
+
+    if (args.includes('--version') || args.includes('-v')) {
+        console.log('PBIP Lens v0.4.3');
+        process.exit(0);
+    }
+
     const logger = new ConsoleLogger();
     const fs = new NodeFileSystem();
 
     try {
-        const targetPath = path.resolve(process.argv[2] || process.cwd());
+        const targetPath = path.resolve(
+            args[0] && !args[0].startsWith('-') ? args[0] : process.cwd()
+        );
         logger.info(`Resolving target project path: ${targetPath}`);
 
         const configManager = new ConfigManager(fs);

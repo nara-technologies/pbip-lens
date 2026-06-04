@@ -14,7 +14,7 @@ Sigue estos pasos en orden al lanzar una nueva versión:
 
 ### 2. Determinar y Aplicar el Incremento de Versión
 - [ ] **Determinar el Nivel de Cambio**:
-  - **Patch** (ej., `0.4.1 -> 0.4.2`): Correcciones internas, ajustes de configuración del paquete (como modificaciones en `.npmignore`) o actualizaciones exclusivas de documentación.
+  - **Patch** (ej., `0.4.2 -> 0.4.3`): Correcciones internas, ajustes de configuración del paquete (como modificaciones en `.npmignore`) o actualizaciones exclusivas de documentación.
   - **Minor** (ej., `0.4.0 -> 0.5.0`): Nuevas funcionalidades compatibles con versiones anteriores (nuevas reglas, parámetros CLI).
   - **Major** (ej., `0.4.0 -> 1.0.0`): Cambios disruptivos en la API, comandos CLI o lógica del núcleo.
 - [ ] **Actualizar package.json**: Incrementa el campo `"version"` en [package.json](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/package.json).

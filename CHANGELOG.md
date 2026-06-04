@@ -7,6 +7,10 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.3] - 2026-06-04
+### Fixed
+- **CLI Argument Interception:** Added command line flag handling for `--help`/`-h` and `--version`/`-v` to exit cleanly, preventing the CLI from crashing when these options are used.
+
 ## [0.4.2] - 2026-06-04
 ### Fixed
 - **NPM Ignore Tuning:** Refined `.npmignore` to exclude `test/` (mock workspaces) and `webview/` (development webview assets) to reduce the published NPM package size and resolve `vsce package` errors.
