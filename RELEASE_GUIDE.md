@@ -2,60 +2,71 @@
 
 [Leer en Español](RELEASE_GUIDE.es.md)
 
-This guide details the mandatory process for launching new versions of **PBIP Lens**, ensuring consistency in versioning and quality in packaging.
+This guide details the mandatory step-by-step checklist for releasing new versions of **PBIP Lens**, ensuring consistency in versioning, verification of packaging, and quality in delivery.
 
-## 1. Preparation and QA
+## Release Checklist
 
-Before versioning, perform the following validations:
+Follow these steps in order when releasing a new version:
 
-- [ ] **Compilation**: Run `npm run compile` and verify that there are no TypeScript or Webpack errors.
-- [ ] **Feature Flags**: Review `src/core/config/featureFlags.ts`. Ensure that features in the `dev` state are hidden for production and those in `preview` have their respective badge.
-- [ ] **Stress Testing**: Run `python scripts/stress_tester.py --count 5000` and verify that the extension responds fluidly in audit mode.
-- [ ] **Cleanup**: Run `python scripts/stress_tester.py --reset` to avoid including test measures in the repository.
+### 1. Verification and QA
+- [ ] **Code Verification**: Run `pnpm run compile` and make sure there are no TypeScript or Webpack errors.
+- [ ] **Tests**: Run `pnpm test` (or `npm run test`) and ensure all test suites pass.
+- [ ] **Feature Flags**: Check `src/core/config/featureFlags.ts`. Ensure that development features are disabled/hidden for production.
+- [ ] **Stress Testing** (Optional): Run `python scripts/stress_tester.py --count 5000` to verify performance on large-scale models, followed by `python scripts/stress_tester.py --reset` to clean up mock measures.
 
-## 2. File Versioning
+### 2. Determine & Apply Version Bump
+- [ ] **Determine the Bump Level**:
+  - **Patch** (e.g., `0.4.1 -> 0.4.2`): Internal fixes, package configurations (like `.npmignore` adjustments), or documentation-only updates.
+  - **Minor** (e.g., `0.4.0 -> 0.5.0`): New backward-compatible features (new rules, CLI parameters).
+  - **Major** (e.g., `0.4.0 -> 1.0.0`): Breaking changes in the API, CLI commands, or core logic.
+- [ ] **Update package.json**: Bump the `"version"` field in [package.json](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/package.json).
 
-Adhere to the [Semantic Versioning](https://semver.org/) standard.
-
-- [ ] **package.json**: Increment the `"version"` property.
+### 3. Synchronize All Documentation Files
+Every release requires updating the following files:
+- [ ] **README.md**: Update the version badge (`Status: vX.Y.Z--Stable`) at the top of the file.
+- [ ] **README.es.md**: Update the version badge (`Status: vX.Y.Z--Stable`) at the top of the file.
 - [ ] **CHANGELOG.md**:
-  - Add a new section with the format: `## [X.Y.Z] - YYYY-MM-DD`.
-  - Classify changes into `Added`, `Changed`, `Fixed`.
-- [ ] **README.md**: Update the status badge (`Status: vX.Y.Z--Stable`).
+  - Add a new block at the top under `## [X.Y.Z] - YYYY-MM-DD`.
+  - Classify changes into `Added` (new features), `Changed` (modified logic), and `Fixed` (bug fixes).
+- [ ] **CHANGELOG.es.md**:
+  - Add a corresponding release block under `## [X.Y.Z] - YYYY-MM-DD`.
+  - Classify changes into `Añadido`, `Cambiado`, and `Corregido`.
+- [ ] **RELEASE_GUIDE.md & RELEASE_GUIDE.es.md**: Update any reference examples to the latest version number if relevant.
 
-## 3. VSIX Packaging (Optional but recommended)
+### 4. Distribution and Packaging Tuning
+- [ ] **Verify Ignores**: Check `.npmignore` and `.vscodeignore` to ensure development folders (such as `src/`, `tests/`, mock workspace folders like `test/`, and `webview/`) are correctly excluded so only compiled assets under `/dist` are shipped.
+- [ ] **Webpack Packaging**: Run `pnpm run package` (webpack compilation) to verify the production bundle builds without errors.
+- [ ] **Validate VSIX Local Packaging**: Compile the VS Code extension locally using `npx @vscode/vsce package` (or `vsce package`). Ensure it packages successfully without errors and generates a `.vsix` file.
 
-To verify what the end user will see:
+### 5. Git Commit and Tagging
+Once the build passes and the packaging is verified, proceed to commit and tag the release:
+- [ ] **Stage Changes**:
+  ```powershell
+  git add package.json README.md README.es.md CHANGELOG.md CHANGELOG.es.md RELEASE_GUIDE.md RELEASE_GUIDE.es.md .npmignore
+  ```
+- [ ] **Commit Files**:
+  ```powershell
+  git commit -m "chore(release): bump version to X.Y.Z and update documentation"
+  ```
+- [ ] **Create Annotated Git Tag**:
+  ```powershell
+  git tag -a vX.Y.Z -m "Release vX.Y.Z"
+  ```
 
-- [ ] Run `vsce package`.
-- [ ] Install the resulting `.vsix` in a clean instance of VS Code.
-- [ ] Verify that views marked as `dev` do **NOT** appear.
-
-## 4. Git and GitHub
-
-The final release process in the repository:
-
-```powershell
-# 1. Stage versioning and documentation changes
-git add package.json CHANGELOG.md README.md
-
-# 2. Commit changes
-git commit -m "chore: release vX.Y.Z"
-
-# 3. Create the Tag (crucial for tracking)
-git tag vX.Y.Z
-
-# 4. Push to remote
-git push origin main
-git push origin vX.Y.Z
-```
-
-## 5. Feature Promotion Criteria
-
-To move a feature between states in `featureFlags.ts`:
-
-1. **Dev → Preview**: The feature is functional, does not cause crashes, and provides value to the user, but the UI or metadata might change.
-2. **Preview → Prod**: The feature has been tested on large models, feedback is positive, and the data structure is stable. It does not require a warning badge.
+### 6. Remote Sync & Publication
+- [ ] **Push Commits and Tags**:
+  ```powershell
+  git push origin <current-branch>
+  git push origin vX.Y.Z
+  ```
+- [ ] **Publish VS Code Extension**: Publish to the Visual Studio Code Marketplace using:
+  ```powershell
+  npx @vscode/vsce publish
+  ```
+- [ ] **Publish NPM CLI Package**: Publish the CLI package to NPMJS using:
+  ```powershell
+  npm publish
+  ```
 
 ---
 

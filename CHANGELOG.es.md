@@ -5,6 +5,10 @@ Todos los cambios notables en la extensión **PBIP Lens** se documentarán en es
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-06-04
+### Corregido
+- **Ajuste de Ignorado de NPM:** Se refinó `.npmignore` para excluir las carpetas `test/` (espacios de prueba simulados) y `webview/` (fuentes de desarrollo de la webview), reduciendo el tamaño del paquete NPM y solucionando fallos en `vsce package`.
+
 ## [0.4.1] - 2026-06-04
 ### Corregido
 - **Configuración de Empaquetado:** Se eliminó el bloque restrictivo `files` de `package.json` y se introdujo `.npmignore` para solucionar errores durante el proceso de empaquetado de la extensión (`vsce package`).
