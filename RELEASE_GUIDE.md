@@ -16,7 +16,7 @@ Follow these steps in order when releasing a new version:
 
 ### 2. Determine & Apply Version Bump
 - [ ] **Determine the Bump Level**:
-  - **Patch** (e.g., `0.4.3 -> 0.4.4`): Internal fixes, package configurations (like `.npmignore` adjustments), or documentation-only updates.
+  - **Patch** (e.g., `0.4.4 -> 0.4.5`): Internal fixes, package configurations (like `.npmignore` adjustments), or documentation-only updates.
   - **Minor** (e.g., `0.4.0 -> 0.5.0`): New backward-compatible features (new rules, CLI parameters).
   - **Major** (e.g., `0.4.0 -> 1.0.0`): Breaking changes in the API, CLI commands, or core logic.
 - [ ] **Update package.json**: Bump the `"version"` field in [package.json](file:///d:/002. MANUEL VASQUEZ/PBIP Lens/pbip-lens/package.json).

@@ -5,6 +5,10 @@ Todos los cambios notables en la extensión **PBIP Lens** se documentarán en es
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.5] - 2026-06-04
+### Corregido
+- **Ajustes en Publicación de VS Code:** Se refinó el archivo `.github/workflows/release.yml` agregando la bandera `--no-dependencies` al comando de publicación de `vsce` para evitar errores durante la instalación de dependencias de desarrollo en el Marketplace.
+
 ## [0.4.4] - 2026-06-04
 ### Añadido
 - **Automatización de CI/CD (Despliegue):** Se incorporó un flujo de trabajo (workflow) en GitHub Actions (`.github/workflows/release.yml`) para realizar la compilación y publicación automática del paquete CLI en NPMJS y de la extensión de VS Code en el Marketplace al subir etiquetas de versión (`v*`).

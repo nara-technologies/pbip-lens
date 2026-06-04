@@ -2,7 +2,7 @@
   "name": "pbip-lens",
   "displayName": "PBIP Lens",
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "author": "NARA Technologies",
   "contributors": [
     "Jesus Manuel Vasquez <mauelvasquezab.contacto@gmail.com>"
