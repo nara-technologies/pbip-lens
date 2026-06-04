@@ -3,12 +3,34 @@
   "displayName": "PBIP Lens",
   "description": "Visual dependency and impact analysis for Power BI Project (.pbip) files. Track DAX measures from definition to report visuals.",
   "version": "0.3.1",
+  "author": "Jesus Manuel Vasquez <mauelvasquezab.contacto@gmail.com>",
   "publisher": "Nara-Technologies",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/nara-technologies/pbip-lens"
   },
+  "keywords": [
+    "powerbi",
+    "dax",
+    "tmdl",
+    "linter",
+    "semantic-model",
+    "pbip",
+    "governance",
+    "ci-cd"
+  ],
   "icon": "images/logo.png",
+  "files": [
+    "dist",
+    "images",
+    "syntaxes",
+    "README.md",
+    "README.es.md",
+    "CHANGELOG.md",
+    "CHANGELOG.es.md",
+    "LICENSE"
+  ],
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -17,6 +39,9 @@
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
+  "bin": {
+    "pbip-lens": "./dist/cli.js"
+  },
   "contributes": {
     "languages": [
       {

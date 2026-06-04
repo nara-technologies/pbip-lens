@@ -1,27 +1,60 @@
 import { SemanticGraph } from '../graph/SemanticGraph';
-import { NodeKinds } from '../models/CanonicalModel';
+import { NodeKinds, CanonicalNode } from '../models/CanonicalModel';
 import { SemanticNodeDTO } from './GraphQueries';
 import { IAuditRule, RuleViolation } from '../ports/IAuditRule';
 import { ILogger } from '../ports/ILogger';
+import { LinterConfig } from '../config/ConfigManager';
+
+export interface LinterViolation extends RuleViolation {
+    level: 'error' | 'warn';
+}
+
+export type LinterResult = Map<string, LinterViolation[]>;
 
 export class AuditEngine {
+    private config?: LinterConfig;
+
     constructor(
         private rules: IAuditRule[],
-        private logger: ILogger
-    ) {}
+        private logger: ILogger,
+        config?: LinterConfig
+    ) {
+        if (config) {
+            this.config = config;
+        }
+    }
 
-    public analyze(graph: SemanticGraph): Map<string, RuleViolation[]> {
+    /**
+     * Sets or updates the configuration dynamically.
+     */
+    public setConfig(config: LinterConfig): void {
+        this.config = config;
+    }
+
+    public analyze(graph: SemanticGraph): LinterResult {
         this.logger.info('Starting audit analysis...');
-        const report = new Map<string, RuleViolation[]>();
+        const report = new Map<string, LinterViolation[]>();
         const nodes = graph.getAllNodes();
 
         for (const node of nodes) {
-            const violations: RuleViolation[] = [];
+            if (this.shouldIgnoreNode(node)) {
+                continue;
+            }
+
+            const violations: LinterViolation[] = [];
             for (const rule of this.rules) {
+                const severitySetting = this.getRuleSeveritySetting(rule.id);
+                if (severitySetting === 'off') {
+                    continue;
+                }
+
                 try {
                     const violation = rule.evaluate(node, graph);
                     if (violation) {
-                        violations.push(violation);
+                        violations.push({
+                            ...violation,
+                            level: severitySetting,
+                        });
                     }
                 } catch (error) {
                     this.logger.error(`Error evaluating rule "${rule.name}" on node "${node.qualifiedName}": ${error}`);
@@ -94,4 +127,49 @@ export class AuditEngine {
         const violations = report.get(nodeId) || [];
         return violations.some(v => v.ruleId === 'orphan-node');
     }
+
+    private getRuleSeveritySetting(ruleId: string): 'error' | 'warn' | 'off' {
+        if (this.config && this.config.rules && ruleId in this.config.rules) {
+            return this.config.rules[ruleId];
+        }
+        return 'error'; // Default is strict
+    }
+
+    private shouldIgnoreNode(node: CanonicalNode): boolean {
+        if (!this.config || !this.config.ignore || this.config.ignore.length === 0) {
+            return false;
+        }
+
+        const nodeName = node.name;
+        const qualifiedName = node.qualifiedName;
+        const filePath = node.source?.filePath ? node.source.filePath.replace(/\\/g, '/') : '';
+
+        for (const pattern of this.config.ignore) {
+            const normalizedPattern = pattern.replace(/\\/g, '/');
+
+            if (normalizedPattern.includes('*') || normalizedPattern.includes('?')) {
+                const escaped = normalizedPattern
+                    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+                    .replace(/\*/g, '.*')
+                    .replace(/\?/g, '.');
+                const regex = new RegExp(`^${escaped}$`, 'i');
+
+                if (regex.test(nodeName) || regex.test(qualifiedName) || (filePath && regex.test(filePath))) {
+                    return true;
+                }
+            } else {
+                const lowerPattern = normalizedPattern.toLowerCase();
+                if (
+                    nodeName.toLowerCase() === lowerPattern ||
+                    qualifiedName.toLowerCase() === lowerPattern ||
+                    (filePath && filePath.toLowerCase().includes(lowerPattern))
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
+

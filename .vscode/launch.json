@@ -17,6 +17,21 @@
 				"${workspaceFolder}/dist/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Debug PBIP Lens CLI",
+			"type": "node",
+			"request": "launch",
+			"program": "${workspaceFolder}/dist/cli.js",
+			"args": [
+				"${workspaceFolder}/test/peru-weather"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "npm: compile",
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen"
 		}
 	]
 }
