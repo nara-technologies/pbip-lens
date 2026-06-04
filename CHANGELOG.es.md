@@ -5,6 +5,10 @@ Todos los cambios notables en la extensión **PBIP Lens** se documentarán en es
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-06-04
+### Corregido
+- **Configuración de Empaquetado:** Se eliminó el bloque restrictivo `files` de `package.json` y se introdujo `.npmignore` para solucionar errores durante el proceso de empaquetado de la extensión (`vsce package`).
+
 ## [0.4.0] - 2026-06-04
 ### Añadido
 - **Modo Linter para CLI y CI/CD:** Incorporación del motor de ejecución CLI (`pbip-lens`) para la validación automatizada de modelos semánticos en entornos desatendidos.

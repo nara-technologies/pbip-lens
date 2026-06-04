@@ -1,0 +1,25 @@
+# Código fuente y pruebas (NPM solo necesita el /dist compilado)
+src/
+tests/
+out/
+.vscode/
+.vscode-test/
+
+# Archivos de configuración de desarrollo
+webpack.config.js
+jest.config.js
+tsconfig.json
+.eslintrc.json
+.prettierrc
+.gitignore
+.vscodeignore
+
+# Archivos de la extensión compilada y logs
+*.vsix
+*.log
+.pbiplensrc.json
+
+# Notas internas o del agente
+instruction*
+task.md
+walkthrough.md
