@@ -7,6 +7,17 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-04
+### Added
+- **CLI & CI/CD Linter Mode:** Introduction of the CLI execution engine (`pbip-lens`) for automated validation of Power BI semantic models in headless pipeline environments.
+- **Rule Severity Configuration:** Support for custom policy mapping (`error` | `warn` | `off`) via `.pbiplensrc.json` configuration file at the target project root.
+- **Exclusion Lists (Ignore Patterns):** Wildcard glob and substring pattern support (`ignore`) to bypass analysis on temporary tables, system measures, or specific `.tmdl` files.
+- **Console Logger Adapter:** Premium `ConsoleLogger` with ANSI color escape codes for terminal outputs, routing linter issues separately through process stdout/stderr channels.
+
+### Changed
+- **Licensing Compliance:** Migrated the project license from MIT to Apache License 2.0 to ensure corporate-grade distribution compliance.
+- **Default Lint Policy:** Adopted strict-error as fallback behavior when no configuration is detected, ensuring pipelines break on architectural debt.
+
 ## [0.3.1] - 2026-05-28
 ### Fixed
 - **Documentation Sync:** Updated Changelog and README to reflect the massive architectural changes introduced in `0.3.0`.

@@ -5,6 +5,17 @@ Todos los cambios notables en la extensión **PBIP Lens** se documentarán en es
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-04
+### Añadido
+- **Modo Linter para CLI y CI/CD:** Incorporación del motor de ejecución CLI (`pbip-lens`) para la validación automatizada de modelos semánticos en entornos desatendidos.
+- **Configuración de Severidad de Reglas:** Soporte para mapear reglas del linter (`error` | `warn` | `off`) mediante un archivo de configuración `.pbiplensrc.json` en la raíz del proyecto.
+- **Lista de Exclusiones (Patrones de Ignorado):** Soporte de comodines y subcadenas (`ignore`) para omitir el análisis de tablas temporales, medidas del sistema o archivos `.tmdl` específicos.
+- **Adaptador de Log para Consola:** Implementación de `ConsoleLogger` con códigos de color ANSI y separación de flujos stdout/stderr para reportes en terminal.
+
+### Cambiado
+- **Cumplimiento Legal de Licencia:** Migración de la licencia del proyecto de MIT a Apache License 2.0 para garantizar el cumplimiento corporativo.
+- **Política por Defecto del Linter:** Adopción de un modo estricto de error por defecto cuando no se detecta archivo de configuración, rompiendo los pipelines automáticamente ante cualquier deuda arquitectónica.
+
 ## [0.3.1] - 2026-05-28
 ### Corregido
 - **Sincronización de Documentación:** Se actualizaron el Changelog y el README para reflejar los cambios arquitectónicos masivos introducidos en la versión `0.3.0`.

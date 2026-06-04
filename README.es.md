@@ -4,7 +4,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)](https://marketplace.visualstudio.com)
-[![Status: Production Ready](https://img.shields.io/badge/Status-v0.3.1--Stable-green.svg)](#)
+[![Status: Production Ready](https://img.shields.io/badge/Status-v0.4.0--Stable-green.svg)](#)
 
 **PBIP Lens** es un Analizador Estático Avanzado y Linter de Arquitectura diseñado para proyectos de desarrollo de Power BI (`.pbip`, `.tmdl`, `.pbir`).
 
