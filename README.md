@@ -2,74 +2,129 @@
 
 [Leer en Español](README.es.md)
 
-**PBIP Lens** is an Advanced Static Analyzer and Architecture Linter designed for Power BI development projects (.pbip, .tmdl, .pbir).
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)](https://marketplace.visualstudio.com)
+[![Status: Production Ready](https://img.shields.io/badge/Status-v0.3.1--Stable-green.svg)](#)
 
-Developed for Data Architects and Business Intelligence Engineers, PBIP Lens integrates directly into Visual Studio Code to audit semantic model integrity, map complex lineages, and validate governance policies. Using a decoupled and extensible analysis engine, the tool helps reduce technical debt and ensure report stability before each deployment.
+**PBIP Lens** is an Advanced Static Analyzer and Architecture Linter designed for Power BI development projects (`.pbip`, `.tmdl`, `.pbir`). 
+
+Designed for BI Engineers and Data Architects, PBIP Lens parses tabular model definition files (TMDL) and report visual schemas into a consolidated semantic graph. It automates model auditing, maps complex DAX lineages, and validates enterprise governance policies both locally in the IDE and automatically in CI/CD pipelines.
+
+---
 
 ## The Challenge in Enterprise BI
 
-As data models grow in enterprise environments, they accumulate obsolete measures, undocumented columns, and design violations. Deleting or modifying these elements carries a high risk of breaking visual reports or nested DAX dependencies. PBIP Lens mitigates this risk by transforming the project source code into a detailed semantic graph that reveals every interconnection.
+As enterprise BI models scale, they inevitably accumulate technical debt: obsolete measures, undocumented columns, and inconsistent naming conventions. Deleting or refactoring these assets carries a massive risk of silently breaking visual reports or nested DAX calculations.
 
-## The Solution: Advanced and Extensible Linter
+**PBIP Lens** solves this by converting your Power BI project source code into a detailed, queryable dependency graph. It maps relationships from physical columns up through multiple layers of nested DAX calculations, all the way to their usage inside individual report visuals. It tells you exactly what is active, what is orphan, and what is safe to modify or delete.
 
-PBIP Lens functions as an architecture and code quality linter. By implementing Hexagonal Architecture and patterns such as Strategy and Pipeline, the analysis engine performs automatic, local evaluation of predefined policies (such as detecting orphan nodes and missing business descriptions). Its extensible design allows teams to incorporate custom naming, security, or performance rules tailored to their internal standards.
+---
 
-## Key Features
+## Dual Installation
 
-### 1. Measures Explorer
-Immediately identify which measures are actively used in reports and which are obsolete.
+To support the entire BI lifecycle, PBIP Lens is distributed in two formats:
 
-* **Active Measures:** Measures detected within the JSON structures of report visuals, including dynamic format strings and conditional titles.
-* **Orphan Measures:** Measures defined in the semantic model that have no structural impact on report visuals and are not referenced by any active measure.
-* **DAX Dependency Graph:** Expand any measure to view its complete lineage (upstream dependencies and downstream dependents). The dependency tree proactively warns if an unused measure is an upstream source of a critical active measure.
-* **Display Folders Support:** Measures are automatically grouped according to the logical folder structure defined in Power BI Desktop.
+### A. The IDE Extension (Local Development)
+Install the VS Code extension directly from the Marketplace to get a visual interface, interactive sidebars, and direct file editing links.
+* Search for **PBIP Lens** in VS Code Extensions and click **Install**.
 
-### 2. Table and Column Audit
-Organize and inspect tables and columns with the same granularity as measures. Includes folder grouping, type differentiation (physical vs. calculated), and direct navigation to TMDL source code.
+### B. The Command-Line Interface (CI/CD Pipelines)
+Install the CLI utility globally or locally in your runner environment to enforce model standards automatically on every commit.
+```bash
+# Install globally via npm
+npm install -g pbip-lens
 
-### 3. Queries Explorer (Preview)
-Inspect Power Query (M) scripts directly within VS Code. PBIP Lens extracts M code from partitions and global expressions, allowing you to audit transformation logic without opening the external Power Query editor.
+# Or run instantly via npx
+npx pbip-lens <path-to-project>
+```
 
-### 4. Interactive Dashboards
-* **Model Health Dashboard:** Provides an executive summary of the project state, including a global orphan score, active vs. orphan ratios, and total visual counts.
-* **Measure and Column Dashboards:** Dedicated interactive panels for individual assets. They include DAX definitions with syntax highlighting, dependency indicators, and metadata inspection.
+---
 
-### 5. Multi-Level AI Integration (BYOK)
-PBIP Lens includes an optional professional-grade AI engine designed to analyze complex DAX logic and provide architectural recommendations directly within measure panels.
-* **Bring Your Own Key (BYOK):** The architecture ensures security by using the native VS Code secret store (SecretStorage). API keys are never stored in plain text.
-* **Multi-Provider Support:** Use local models via the native VS Code LM API (GitHub Copilot, Cursor) or configure external providers like Groq, Google Gemini, or OpenAI.
-* **Streaming Responses:** AI analysis is streamed directly to the panel interface for immediate feedback.
+## The CLI & CI/CD Integration
 
-### 6. Native Go-to-Source Navigation
-Interact with any measure or column in the sidebar explorer, and PBIP Lens will instantly open the corresponding `.tmdl` file, positioning the cursor exactly at the source definition for immediate audit or editing.
+PBIP Lens acts as the guardian of your BI project's architecture, preventing flawed semantic models from reaching production environments.
 
-## Quick Start Guide
+When executed on your repository path, the CLI builds the semantic model graph, runs the audit engine against configured policies, and generates a formatted report grouped by severity level (`ERRORS` vs `WARNINGS`).
 
-1. Open the root folder of your Power BI project (.pbip) in VS Code.
-2. Navigate to the PBIP Lens view in the activity bar.
-3. The extension will automatically scan the workspace to locate the Semantic Model (.SemanticModel) and Report (.Report) definitions.
-4. Use the explorer trees to navigate lineages, or click specific assets to open their source code or detailed audit panels.
+### Pipeline Gatekeeper (Exit Codes)
+The CLI operates under strict execution rules to automate quality gates in CI/CD:
+* **Exit Code `0` (PASSED)**: The model is clean or contains only `warn`-level violations.
+* **Exit Code `1` (FAILED)**: The model contains one or more `error`-level violations. This will break the build or pull request pipeline.
 
-## Architecture and Privacy
+```bash
+$ pbip-lens ./my-powerbi-project
 
-PBIP Lens is built with a strict focus on performance and enterprise data security:
+Resolving target project path: /home/runner/work/my-powerbi-project
+Loaded rules configuration: {"orphan-node":"error","missing-description":"warn"}
+Starting project pipeline processing...
+Audit analysis completed.
 
-* **100% Local Execution:** No schema data, report metadata, or DAX code is transmitted to external servers during standard audit operations. External transmission only occurs if the AI Explainer function is explicitly activated with the configured API provider.
-* **Deep Structural Analysis:** Unlike generic plain-text searches that generate false positives, the core engine analyzes the deeply nested structures of modern `.pbir` formats and JSON visual definitions.
+=== PBIP LENS LINTER REPORT ===
 
-## Internal Engine
+ERRORS (1):
+  - [orphan-node] Node: 'Sales'[Total Revenue Obsolete] (_Measures.tmdl:42) | Message: Node 'Sales'[Total Revenue Obsolete] is orphan (no incoming dependencies).
 
-PBIP Lens uses a multi-layered static analysis engine:
+WARNINGS (1):
+  - [missing-description] Node: 'Products'[Margin] (Products.tmdl:12) | Message: Node 'Products'[Margin] is missing a description.
 
-* **TMDL Static Analyzer:** A robust parser that interprets the object hierarchy of the Tabular Model Definition Language (TMDL), extracting clean DAX definitions while managing inline comments and formatting metatags.
-* **BFS Graph Engine:** Dependencies are calculated using a Breadth-First Search (BFS) traversal algorithm. If Column A feeds Measure B, and Measure B is used in a visual, the engine correctly identifies Column A as active.
-* **Report Structure Mapping:** The engine interprets the `visual.json` schema to identify both direct field references and hidden configurations within the report layout.
+SUMMARY:
+  - Errors: 1
+  - Warnings: 1
 
-## Known Limitations
+Result: FAILED (Exit Code: 1 due to error-level violations)
+```
 
-* The current analysis engine requires projects to be saved using the Tabular Model Definition Language (TMDL) format.
-* Detection of usage in highly customized third-party visuals using non-standard JSON structures may require manual validation.
+---
+
+## Governance & Configuration
+
+You can fully customize policy enforcement via a `.pbiplensrc.json` file placed in the root directory of your Power BI project.
+
+### Config File Structure
+```json
+{
+  "rules": {
+    "orphan-node": "error",
+    "missing-description": "warn"
+  },
+  "ignore": [
+    "*Temp*",
+    "System_*",
+    "definition/tables/LogTable.tmdl"
+  ]
+}
+```
+
+### Config Options
+1. **Rule Severities**: Individual rules can be mapped to one of three levels:
+   - `error`: Triggers a pipeline-breaking error (exits with code `1`).
+   - `warn`: Prints a colored warning in stdout, but does not block the pipeline (exits with code `0`).
+   - `off`: Disables the rule evaluation entirely.
+2. **Strict Defaults**: If no `.pbiplensrc.json` is found in the project root, PBIP Lens defaults to a **strict-error configuration** (all built-in rules set to `error`).
+3. **Exclusion List (`ignore`)**: Exclude specific files, tables, or measures from linting by providing exact matches, substrings, or wildcard patterns (e.g. `*Temp*` or `System_*`).
+
+---
+
+## VS Code Node Inspector
+
+For local development and refactoring, PBIP Lens provides a premium, interactive **Node Inspector** panel inside Visual Studio Code.
+
+* **Clean DAX definitions**: View measure expressions formatted with syntax highlighting, stripped of distracting inline metadata.
+* **Granular Lineage Tree**: Inspect upstream (what this measure depends on) and downstream (what visuals or nested measures consume this measure) dependencies.
+* **Visual Title Warnings**: Highlights when a visual consumes a measure but lacks a descriptive title.
+* **Instant Refactoring**: Physically delete orphan measures from disk with a single click, directly from the webview panel.
+* **Go-to-Source Navigation**: Double-click any explorer tree node to open the corresponding `.tmdl` definition file with the cursor placed exactly at the source line.
+
+---
+
+## Technical Details & Architecture
+
+* **Tabular Model Parser (TMDL)**: Interprets Tabular Model Definition Language specifications, managing block layouts and multi-line expressions.
+* **Visual Schema Resolver**: Deeply parses the modern `.pbir` visual format and layout JSONs to detect dynamic formatting, tooltips, and conditional styling usages.
+* **100% Local and Secure**: No schema data, code, or metadata is ever transmitted to external servers. Your corporate IP remains entirely inside your secure network.
+
+---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

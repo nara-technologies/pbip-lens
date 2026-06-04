@@ -1,77 +1,130 @@
 # PBIP Lens
 
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)
-![Status: Production Ready](https://img.shields.io/badge/Status-v0.1.3--Stable-green.svg)
+[Read in English](README.md)
 
-**PBIP Lens** es un Linter de Arquitectura y Analizador Estatico Avanzado diseñado para proyectos de desarrollo de Power BI (.pbip, .tmdl, .pbir).
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)](https://marketplace.visualstudio.com)
+[![Status: Production Ready](https://img.shields.io/badge/Status-v0.3.1--Stable-green.svg)](#)
 
-Desarrollado para Arquitectos de Datos y Desarrolladores de Business Intelligence, PBIP Lens se integra directamente en Visual Studio Code para auditar la integridad del modelo semantico, mapear linajes complejos y validar politicas de gobernanza. Mediante un motor de analisis desacoplado y extensible, la herramienta ayuda a reducir la deuda tecnica y garantizar la estabilidad de los reportes antes de cada despliegue.
+**PBIP Lens** es un Analizador Estático Avanzado y Linter de Arquitectura diseñado para proyectos de desarrollo de Power BI (`.pbip`, `.tmdl`, `.pbir`).
 
-## El Desafio en Enterprise BI
+Desarrollado para Ingenieros de BI y Arquitectos de Datos, PBIP Lens analiza los archivos de definición del modelo tabular (TMDL) y los esquemas visuales de los reportes en un gráfico semántico consolidado. Automatiza las auditorías de modelos, mapea linajes complejos de DAX y valida políticas de gobernanza corporativas tanto de forma local en el IDE como de forma automatizada en pipelines de CI/CD.
 
-A medida que los modelos de datos crecen en entornos corporativos, acumulan medidas obsoletas, columnas sin documentar y violaciones de diseño. Eliminar o modificar estos elementos conlleva un alto riesgo de rotura en reportes visuales o dependencias anidadas en DAX. PBIP Lens mitiga este riesgo transformando el codigo fuente del proyecto en un grafo semantico detallado que revela cada interconexion.
+---
 
-## La Solucion: Linter Avanzado y Extensible
+## El desafío del BI Empresarial
 
-PBIP Lens funciona como un linter de arquitectura y calidad de codigo. Al implementar una Arquitectura Hexagonal y patrones como Strategy y Pipeline, el motor de analisis realiza una evaluacion automatica y local de politicas predefinidas (como la deteccion de nodos huerfanos y la ausencia de descripciones de negocio). Su diseño extensible permite a los equipos incorporar reglas personalizadas de nomenclatura, seguridad o rendimiento adaptadas a sus estandares internos.
+A medida que los modelos de BI empresariales crecen, acumulan inevitablemente deuda técnica: medidas obsoletas, columnas no documentadas y convenciones de nomenclatura inconsistentes. Eliminar o refactorizar estos activos conlleva un riesgo enorme de romper silenciosamente reportes visuales o cálculos de DAX anidados.
 
-## Caracteristicas Principales
+**PBIP Lens** resuelve esto convirtiendo el código fuente de tu proyecto de Power BI en un grafo de dependencias detallado e interactivo. Mapea relaciones desde columnas físicas a través de múltiples capas de cálculos DAX anidados, hasta su uso final dentro de los visuales de reportes individuales. Te dice exactamente qué está activo, qué está huérfano y qué es seguro modificar o eliminar.
 
-### 1. Explorador de Medidas
-Identifica de forma inmediata que medidas estan siendo utilizadas activamente en los reportes y cuales son obsoletas.
+---
 
-* **Medidas Activas:** Medidas detectadas dentro de las estructuras JSON de los visuales del reporte, incluyendo cadenas de formato dinamico y titulos condicionales.
-* **Medidas Huerfanas:** Medidas definidas en el modelo semantico que no tienen impacto estructural en los visuales del reporte y no son referenciadas por ninguna medida activa.
-* **Grafo de Dependencias DAX:** Expande cualquier medida para ver su linaje completo (dependencias upstream y dependientes downstream). El arbol de dependencias advierte de forma proactiva si una medida no utilizada es fuente upstream de una medida activa critica.
-* **Soporte de Carpetas de Presentacion:** Las medidas se agrupan automaticamente segun la estructura de carpetas logica definida en Power BI Desktop.
+## Installaión Dual
 
-### 2. Auditoria de Tablas y Columnas
-Organiza e inspecciona tus tablas y columnas con la misma granularidad que las medidas. Incluye agrupacion por carpetas, diferenciacion de tipos (fisica vs. calculada) y navegacion directa al codigo fuente TMDL.
+Para dar soporte a todo el ciclo de vida del BI, PBIP Lens se distribuye en dos formatos:
 
-### 3. Explorador de Consultas (Vista Previa)
-Inspecciona scripts de Power Query (M) directamente desde VS Code. PBIP Lens extrae el codigo M desde las particiones y expresiones globales, permitiendo auditar la logica de transformacion sin necesidad de abrir el editor externo de Power Query.
+### A. La Extensión de IDE (Desarrollo Local)
+Instala la extensión de VS Code directamente desde el Marketplace para obtener una interfaz visual, paneles laterales interactivos y enlaces de edición de código directa.
+* Busca **PBIP Lens** en las Extensiones de VS Code y haz clic en **Instalar**.
 
-### 4. Paneles Interactivos
-* **Panel de Salud del Modelo:** Proporciona un resumen ejecutivo del estado del proyecto, incluyendo una puntuacion global de huerfanos, ratios de activos activos vs. huerfanos y conteo total de visuales.
-* **Paneles de Medida y Columna:** Paneles interactivos dedicados a activos individuales. Incluyen definiciones DAX con resaltado de sintaxis, indicadores de dependencias e inspeccion de metadatos.
+### B. La Interfaz de Línea de Comandos / CLI (Pipelines CI/CD)
+Instala la utilidad CLI de forma global o local en tu entorno de ejecución para aplicar los estándares de modelo de forma automatizada en cada confirmación (commit).
+```bash
+# Instalar globalmente mediante npm
+npm install -g pbip-lens
 
-### 5. Integracion de IA Multi-Nivel (BYOK)
-PBIP Lens incluye un motor de IA opcional de nivel profesional diseñado para analizar logica DAX compleja y proporcionar recomendaciones arquitectonicas directamente en los paneles de medidas.
-* **Bring Your Own Key (BYOK):** La arquitectura garantiza la seguridad utilizando el almacen de secretos nativo de VS Code (SecretStorage). Las claves de API nunca se guardan en texto plano.
-* **Soporte Multi-Proveedor:** Utiliza modelos locales a traves de la API nativa de VS Code LM (GitHub Copilot, Cursor) o configura proveedores externos como Groq, Google Gemini u OpenAI.
-* **Respuestas en Streaming:** El analisis de IA se transmite directamente a la interfaz del panel para obtener retroalimentacion inmediata.
+# O ejecutar al instante con npx
+npx pbip-lens <ruta-al-proyecto>
+```
 
-### 6. Navegacion Nativa al Codigo Fuente
-Interactua con cualquier medida o columna en el explorador lateral y PBIP Lens abrira instantaneamente el archivo `.tmdl` correspondiente, posicionando el cursor exactamente en la definicion fuente para auditoria o edicion inmediata.
+---
 
-## Guia de Inicio Rapido
+## La CLI & CI/CD Integration
 
-1. Abre la carpeta raiz de tu proyecto Power BI (.pbip) en VS Code.
-2. Navega a la vista de PBIP Lens en la barra de actividad.
-3. La extension escaneara automaticamente el espacio de trabajo para localizar las definiciones del Modelo Semantico (.SemanticModel) y el Reporte (.Report).
-4. Utiliza los arboles del explorador para navegar por los linajes, o haz clic en activos especificos para abrir su codigo fuente o paneles de auditoria detallados.
+PBIP Lens actúa como el guardián de la arquitectura de tu proyecto de BI, evitando que modelos semánticos defectuosos o con violaciones lleguen a los entornos de producción.
 
-## Arquitectura y Privacidad
+Cuando se ejecuta sobre la ruta de tu repositorio, el CLI construye el grafo del modelo semántico, ejecuta el motor de auditoría contra las políticas configuradas y genera un reporte formateado agrupado por nivel de severidad (`ERRORS` vs `WARNINGS`).
 
-PBIP Lens esta construido con un enfoque estricto en rendimiento y seguridad de datos empresariales:
+### Guardián del Pipeline (Códigos de Salida)
+El CLI opera bajo reglas estrictas de ejecución para automatizar filtros de calidad en CI/CD:
+* **Código de Salida `0` (PASSED)**: El modelo está limpio o contiene únicamente violaciones de nivel `warn` (advertencia).
+* **Código de Salida `1` (FAILED)**: El modelo contiene una o más violaciones de nivel `error`. Esto romperá la ejecución del pipeline del build o pull request.
 
-* **Ejecucion 100% Local:** Ningun dato de esquema, metadato de reporte o codigo DAX es transmitido a servidores externos durante las operaciones de auditoria estandar. La transmision externa unicamente ocurre si se activa explicitamente la funcion de Explicador IA con el proveedor de API configurado.
-* **Analisis Estructural Profundo:** A diferencia de las busquedas genericas de texto plano que generan falsos positivos, el motor principal analiza las estructuras profundamente anidadas de los formatos modernos `.pbir` y las definiciones JSON de los visuales.
+```bash
+$ pbip-lens ./mi-proyecto-powerbi
 
-## Motor Interno
+Resolving target project path: /home/runner/work/mi-proyecto-powerbi
+Loaded rules configuration: {"orphan-node":"error","missing-description":"warn"}
+Starting project pipeline processing...
+Audit analysis completed.
 
-PBIP Lens utiliza un motor de analisis estatico de multiples capas:
+=== PBIP LENS LINTER REPORT ===
 
-* **Analizador Estatico TMDL:** Un parser robusto que interpreta la jerarquia de objetos del Lenguaje de Definicion de Modelos Tabulares (TMDL), extrayendo definiciones DAX limpias mientras gestiona comentarios en linea y metatags de formato.
-* **Motor de Grafo con Busqueda en Anchura (BFS):** Las dependencias se calculan mediante un algoritmo de recorrido BFS. Si la Columna A alimenta la Medida B, y la Medida B se utiliza en un visual, el motor identifica correctamente la Columna A como activa.
-* **Mapeo de Estructura de Reportes:** El motor interpreta el esquema `visual.json` para identificar tanto las referencias directas de campos como las configuraciones ocultas dentro del layout del reporte.
+ERRORS (1):
+  - [orphan-node] Node: 'Sales'[Total Revenue Obsolete] (_Measures.tmdl:42) | Message: Node 'Sales'[Total Revenue Obsolete] is orphan (no incoming dependencies).
 
-## Limitaciones Conocidas
+WARNINGS (1):
+  - [missing-description] Node: 'Products'[Margin] (Products.tmdl:12) | Message: Node 'Products'[Margin] is missing a description.
 
-* El motor de analisis actual requiere que los proyectos esten guardados utilizando el formato de Lenguaje de Definicion de Modelos Tabulares (TMDL).
-* La deteccion de uso en visuales de terceros altamente personalizados que utilicen estructuras JSON no estandar puede requerir validacion manual.
+SUMMARY:
+  - Errors: 1
+  - Warnings: 1
+
+Result: FAILED (Exit Code: 1 due to error-level violations)
+```
+
+---
+
+## Gobernanza & Configuración
+
+Puedes personalizar completamente el cumplimiento de políticas mediante un archivo `.pbiplensrc.json` colocado en el directorio raíz de tu proyecto de Power BI.
+
+### Estructura del Archivo de Configuración
+```json
+{
+  "rules": {
+    "orphan-node": "error",
+    "missing-description": "warn"
+  },
+  "ignore": [
+    "*Temp*",
+    "System_*",
+    "definition/tables/LogTable.tmdl"
+  ]
+}
+```
+
+### Opciones de Configuración
+1. **Severidades de Regla**: Las reglas individuales se pueden mapear a uno de tres niveles:
+   - `error`: Activa un error que rompe el pipeline (sale con código `1`).
+   - `warn`: Imprime una advertencia coloreada en stdout, pero no bloquea el pipeline (sale con código `0`).
+   - `off`: Desactiva la evaluación de la regla por completo.
+2. **Valores por Defecto Estrictos**: Si no se encuentra ningún `.pbiplensrc.json` en la raíz del proyecto, PBIP Lens asume por defecto una **configuración estricta de error** (todas las reglas integradas establecidas en `error`).
+3. **Lista de Exclusiones (`ignore`)**: Excluye archivos, tablas o medidas específicas del análisis linter proporcionando coincidencias exactas, subcadenas o patrones de comodín (por ejemplo, `*Temp*` o `System_*`).
+
+---
+
+## 5. VS Code Node Inspector
+
+Para el desarrollo y refactorización local, PBIP Lens proporciona un panel interactivo premium de **Inspector de Nodo** dentro de Visual Studio Code.
+
+* **Definiciones DAX Limpias**: Visualiza expresiones de medidas formateadas con resaltado de sintaxis, libres de metadatos de formato o etiquetas de linaje.
+* **Árbol de Linaje Granular**: Inspecciona dependencias upstream (de qué depende esta medida) y downstream (qué visuales o medidas anidadas la consumen).
+* **Advertencias de Títulos Visuales**: Resalta cuando un visual consume una medida pero no tiene un título explícito configurado.
+* **Refactorización Instantánea**: Elimina físicamente medidas huérfanas del disco con un solo clic, directamente desde el panel del inspector.
+* **Navegación al Código Fuente**: Haz doble clic en cualquier nodo del explorador de árbol para abrir el archivo de definición `.tmdl` correspondiente con el cursor colocado exactamente en la línea fuente de la definición.
+
+---
+
+## Detalles Técnicos y Arquitectura
+
+* **Analizador Tabular (TMDL)**: Interpreta las especificaciones del lenguaje de definición del modelo tabular (TMDL), manejando bloques de diseño y expresiones de múltiples líneas.
+* **Resolución de Esquemas Visuales**: Analiza a fondo el formato visual moderno `.pbir` y los JSON de diseño de Power BI para detectar usos en formatos dinámicos, tooltips y títulos condicionales.
+* **100% Local y Seguro**: Ningún dato de esquema, código o metadato se transmite a servidores externos. Tu propiedad intelectual corporativa permanece por completo dentro de tu red segura.
+
+---
 
 ## Licencia
 
-Este proyecto esta licenciado bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para mas detalles.
+Este proyecto está licenciado bajo la Licencia MIT; consulta el archivo [LICENSE](LICENSE) para obtener más detalles.
