@@ -127,4 +127,4 @@ Para el desarrollo y refactorización local, PBIP Lens proporciona un panel inte
 
 ## Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT; consulta el archivo [LICENSE](LICENSE) para obtener más detalles.
+Este proyecto está licenciado bajo la Licencia Apache 2.0; consulta el archivo [LICENSE](LICENSE) para obtener más detalles.
