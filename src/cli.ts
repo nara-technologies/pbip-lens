@@ -27,7 +27,8 @@ Options:
     }
 
     if (args.includes('--version') || args.includes('-v')) {
-        console.log('PBIP Lens v0.4.5');
+        const pkg = require('../package.json');
+        console.log(`PBIP Lens v${pkg.version}`);
         process.exit(0);
     }
 

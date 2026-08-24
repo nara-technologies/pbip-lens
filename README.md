@@ -4,7 +4,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC.svg)](https://marketplace.visualstudio.com)
-[![Status: Production Ready](https://img.shields.io/badge/Status-v0.4.5--Stable-green.svg)](#)
+[![Versión](https://img.shields.io/visual-studio-marketplace/v/Nara-Technologies.pbip-lens?color=green)](https://marketplace.visualstudio.com/items?itemName=Nara-Technologies.pbip-lens)
 
 **PBIP Lens** is an Advanced Static Analyzer and Architecture Linter designed for Power BI development projects (`.pbip`, `.tmdl`, `.pbir`). 
 

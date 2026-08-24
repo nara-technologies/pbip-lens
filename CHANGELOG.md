@@ -7,6 +7,10 @@ All notable changes to the **PBIP Lens** extension will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2026-08-24
+### Changed
+- Centralized versioning: Dynamic version injection in Webview, CLI, and README.
+
 ## [0.4.5] - 2026-06-04
 ### Fixed
 - **VS Code Publishing Adjustments:** Fine-tuned `.github/workflows/release.yml` by appending the `--no-dependencies` flag to the `vsce publish` call, preventing the publishing step from failing due to developer dependencies installation attempts.

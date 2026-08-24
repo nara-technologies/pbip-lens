@@ -164,6 +164,7 @@ export class WebviewManager {
         const logoLightUri = webview.asWebviewUri(vscode.Uri.joinPath(imagesUri, 'logo-light.svg'));
         const cspSource = webview.cspSource;
         const nonce = this.generateNonce();
+        const pkg = require('../../package.json');
 
         // Read dashboard HTML template from disk.
         const htmlPath = path.join(dashboardUri.fsPath, 'index.html');
@@ -176,6 +177,7 @@ export class WebviewManager {
         html = html.replace(/\{\{logoLightUri\}\}/g, logoLightUri.toString());
         html = html.replace(/\{\{cspSource\}\}/g, cspSource);
         html = html.replace(/\{\{nonce\}\}/g, nonce);
+        html = html.replace(/\{\{version\}\}/g, pkg.version);
 
         return html;
     }
