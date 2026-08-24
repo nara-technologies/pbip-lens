@@ -5,7 +5,7 @@ Todos los cambios notables en la extensión **PBIP Lens** se documentarán en es
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.6] - 2026-08-24
+## [0.4.7] - 2026-08-24
 ### Modificado
 - Versionado centralizado: Inyección dinámica de versión en Webview, CLI y README.
 
